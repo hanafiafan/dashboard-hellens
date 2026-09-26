@@ -36,7 +36,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     renderer.shadowMap.type = T.PCFSoftShadowMap
     renderer.outputColorSpace = T.SRGBColorSpace
     renderer.toneMapping = T.ACESFilmicToneMapping
-    renderer.toneMappingExposure = 1.06
+    renderer.toneMappingExposure = 1.08
     container.appendChild(renderer.domElement)
 
     const scene = new T.Scene()
@@ -46,44 +46,43 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     const room = new RoomEnvironment()
     const environment = pmrem.fromScene(room, 0.04)
     scene.environment = environment.texture
-    scene.environmentIntensity = 0.95
+    scene.environmentIntensity = 0.96
     room.dispose()
     pmrem.dispose()
 
     // 2. Camera Setup: Cinematic Tilted Perspective for true 3D Depth
-    // A 32-degree perspective camera tilted at ~12 degrees gives realistic volume & bevel highlights
     const camera = new T.PerspectiveCamera(32, 1, 0.1, 100)
     camera.position.set(0, -2.6, 17.5)
     camera.lookAt(0, 0.3, 0)
 
     // 3. Disney / Blender 3D Studio Three-Point Lighting Setup
     // Key Sun: Warm golden sunlight from upper-left
-    const sun = new T.DirectionalLight(0xfff6e8, 3.8)
+    const sun = new T.DirectionalLight(0xfff7ea, 3.8)
     sun.position.set(-13, 16, 18)
     sun.castShadow = true
     sun.shadow.mapSize.set(2048, 2048)
     Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 12, bottom: -12, near: 0.1, far: 50 })
     sun.shadow.normalBias = 0.02
     sun.shadow.bias = -0.0004
-    sun.shadow.radius = 4.2
+    sun.shadow.radius = 4.0
     scene.add(sun)
 
     // Ambient & Hemisphere Sky Light
-    scene.add(new T.AmbientLight(0xffffff, 0.25))
-    scene.add(new T.HemisphereLight(0xdcf0ff, 0x182c20, 0.72))
+    scene.add(new T.AmbientLight(0xffffff, 0.32))
+    scene.add(new T.HemisphereLight(0xdcf0ff, 0x182c20, 0.75))
 
     // Crisp Blue Rim Light from upper-right (Pixar silhouette glint)
-    const rimLight = new T.PointLight(0x70b8ff, 80, 50)
+    const rimLight = new T.PointLight(0x70b8ff, 85, 50)
     rimLight.position.set(13, 10, 8)
     scene.add(rimLight)
 
     // Warm Studio Bounce Light from bottom-left
-    const warmBounce = new T.PointLight(0xffaa50, 45, 40)
+    const warmBounce = new T.PointLight(0xffaa50, 48, 40)
     warmBounce.position.set(-11, -12, 6)
     scene.add(warmBounce)
 
     // Soft Overhead Fill Light
-    const topFill = new T.PointLight(0xffffff, 25, 35)
+    const topFill = new T.PointLight(0xffffff, 28, 35)
     topFill.position.set(0, 0.5, 12)
     scene.add(topFill)
 
@@ -184,7 +183,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       return mesh
     }
 
-    // Beveled rounded box generator for Pixar / Blender 3D tactile aesthetics
+    // Beveled rounded box generator
     const box = (g: T.Group, w: number, h: number, d: number, m: T.Material, x = 0, y = 0, z = 0, r = 0.08) => {
       const radius = Math.min(r, w / 2 - 0.001, h / 2 - 0.001)
       const a = -w / 2, b = -h / 2
@@ -228,10 +227,8 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       canvasDraw: (ctx: CanvasRenderingContext2D, width: number, height: number) => void
     ) => {
       const pGroup = new T.Group()
-      // 3D paper backing with real thickness and beveled edge
       box(pGroup, w, h, d, warmPaper, 0, 0, d / 2, 0.04)
 
-      // High-resolution canvas texture for crisp vector-like typography
       const c = document.createElement('canvas')
       c.width = 1536
       c.height = Math.round(1536 * (h / w))
@@ -286,9 +283,13 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
 
     // 2. "Dashboard" 3D Paper Cutout
     const paperDashboard = createTitlePaper(7.4, 2.2, 0.045, (ctx, cw, ch) => {
-      // Coral highlighter brush stroke under text
-      ctx.fillStyle = 'rgba(232, 89, 44, 0.65)'
-      ctx.fillRect(cw * 0.05, ch * 0.78, cw * 0.90, 42)
+      // Realistic vibrant Stabilo marker stroke with translucent edges
+      const grad = ctx.createLinearGradient(cw * 0.05, 0, cw * 0.95, 0)
+      grad.addColorStop(0, 'rgba(232, 89, 44, 0.75)')
+      grad.addColorStop(0.5, 'rgba(255, 105, 55, 0.82)')
+      grad.addColorStop(1, 'rgba(232, 89, 44, 0.70)')
+      ctx.fillStyle = grad
+      ctx.fillRect(cw * 0.05, ch * 0.75, cw * 0.90, 48)
 
       // Italic display serif font
       ctx.font = 'italic 700 240px "Newsreader", Georgia, serif'
@@ -348,9 +349,8 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     const kCtx = kickerCanvas.getContext('2d')!
     kCtx.fillStyle = 'rgba(0,0,0,0)'
     kCtx.clearRect(0, 0, 1024, 256)
-
     kCtx.font = 'bold 44px "Space Mono", monospace'
-    kCtx.fillStyle = 'rgba(215, 240, 222, 0.85)'
+    kCtx.fillStyle = 'rgba(215, 240, 222, 0.88)'
     kCtx.fillText('A LITTLE DATA. A LOT OF CLARITY. ↗', 40, 150)
 
     const kickerTex = new T.CanvasTexture(kickerCanvas)
@@ -372,12 +372,10 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     const capCtx = captionCanvas.getContext('2d')!
     capCtx.fillStyle = 'rgba(0,0,0,0)'
     capCtx.clearRect(0, 0, 1024, 256)
-
     capCtx.font = '500 58px "Caveat", cursive'
     capCtx.fillStyle = 'rgba(215, 240, 222, 0.88)'
     capCtx.textAlign = 'center'
     capCtx.fillText('Thoughtfully arranged. Clearly understood.', 512, 120)
-    // Chalk underline
     capCtx.strokeStyle = 'rgba(215, 240, 222, 0.65)'
     capCtx.lineWidth = 4
     capCtx.beginPath()
@@ -459,14 +457,6 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       wire.castShadow = true
       wireGroup.add(wire)
     }
-
-    // Designer gel pen on sketchbook
-    const pen = new T.Group()
-    sketchbook.add(pen)
-    addMesh(pen, new T.CylinderGeometry(0.045, 0.045, 2.4, 24), material('#161817', 0.2, 0.3, 0.6), -0.65, -0.15, 0.24).rotation.z = 0.42
-    addMesh(pen, new T.ConeGeometry(0.045, 0.22, 24), chromeMetal, -1.02, -1.2, 0.24).rotation.z = 0.42
-    addMesh(pen, new T.CylinderGeometry(0.05, 0.05, 0.6, 24), chromeMetal, -0.32, 0.72, 0.24).rotation.z = 0.42
-    addMesh(pen, new T.BoxGeometry(0.02, 0.4, 0.06), chromeMetal, -0.27, 0.65, 0.28).rotation.z = 0.42
 
     clickableObjects.push({ mesh: sketchbook, key: 'projects', originalScale: 1.0 })
 
@@ -682,11 +672,46 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     scene.add(cameraProp)
     cameraProp.userData = { key: 'skills' }
 
-    // Photo Prints under Camera
-    const print1 = box(cameraProp, 2.4, 3.0, 0.03, warmPaper, 0.2, 0.2, 0.015, 0.04)
+    // Photo Prints under Camera with actual graphic art
+    const createPhotoPrint = (w: number, h: number, draw: (ctx: CanvasRenderingContext2D, width: number, height: number) => void) => {
+      const p = new T.Group()
+      box(p, w, h, 0.035, warmPaper, 0, 0, 0.018, 0.04)
+      const c = document.createElement('canvas')
+      c.width = 512; c.height = Math.round(512 * (h / w))
+      const ctx = c.getContext('2d')!
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height)
+      draw(ctx, c.width, c.height)
+      const tex = new T.CanvasTexture(c)
+      tex.colorSpace = T.SRGBColorSpace
+      addMesh(p, new T.PlaneGeometry(w * 0.98, h * 0.98), new T.MeshStandardMaterial({ map: tex, roughness: 0.35 }), 0, 0, 0.04)
+      return p
+    }
+
+    const print1 = createPhotoPrint(2.6, 3.2, (ctx, cw, ch) => {
+      // Architectural photography composition
+      ctx.fillStyle = '#10221c'; ctx.fillRect(20, 20, cw - 40, ch - 80)
+      ctx.fillStyle = '#e8592c'
+      ctx.beginPath(); ctx.arc(cw * 0.65, ch * 0.35, 60, 0, Math.PI * 2); ctx.fill()
+      ctx.fillStyle = '#3a584c'; ctx.fillRect(40, ch * 0.45, cw - 80, ch * 0.35)
+      ctx.font = 'bold 20px "Space Mono", monospace'
+      ctx.fillStyle = '#334038'
+      ctx.fillText('HELLENS ARCHIVE // 01', 30, ch - 30)
+    })
+    print1.position.set(0.2, 0.2, 0.015)
     print1.rotation.z = -0.32
-    const print2 = box(cameraProp, 2.4, 3.0, 0.03, warmPaper, 0, 0, 0.045, 0.04)
+    cameraProp.add(print1)
+
+    const print2 = createPhotoPrint(2.5, 3.1, (ctx, cw, ch) => {
+      ctx.fillStyle = '#1f2e27'; ctx.fillRect(20, 20, cw - 40, ch - 80)
+      ctx.fillStyle = '#52b788'; ctx.fillRect(50, 60, cw - 100, 160)
+      ctx.fillStyle = '#f4f0e6'; ctx.fillRect(80, 180, 120, 80)
+      ctx.font = 'bold 20px "Space Mono", monospace'
+      ctx.fillStyle = '#334038'
+      ctx.fillText('STUDIO PROCESS // 02', 30, ch - 30)
+    })
+    print2.position.set(0, 0, 0.045)
     print2.rotation.z = -0.15
+    cameraProp.add(print2)
 
     // Camera Body (Ergonomic rounded chassis with textured grip)
     box(cameraProp, 2.3, 1.6, 1.15, plasticDark, 0, 0, 0.65, 0.18)
@@ -701,7 +726,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     const shutter = addMesh(cameraProp, new T.CylinderGeometry(0.16, 0.18, 0.16, 24), chromeMetal, 0.74, -0.42, 1.25)
     shutter.rotation.x = Math.PI / 2
 
-    // Telephoto Zoom Lens Assembly
+    // Telephoto Zoom Lens Assembly with Red Ring & Multi-coated Glass
     const lensGroup = new T.Group()
     cameraProp.add(lensGroup)
     lensGroup.position.set(-0.25, -0.15, 1.25)
@@ -764,34 +789,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     buildEarPod(0.55, 1.9, 0.05, -0.65)
 
     // =========================================================================
-    // ASSET 8: 3D WOODEN PENCILS & ARTIST ERASER
-    // =========================================================================
-    const stationeryGroup = new T.Group()
-    scene.add(stationeryGroup)
-
-    const createPencil = (bodyColor: string) => {
-      const p = new T.Group()
-      addMesh(p, new T.CylinderGeometry(0.055, 0.055, 2.5, 6), material(bodyColor, 0, 0.4, 0.4), 0, 0, 0.06).rotation.z = Math.PI / 2
-      addMesh(p, new T.ConeGeometry(0.055, 0.30, 16), material('#e8cfab', 0, 0.85), -1.40, 0, 0.06).rotation.z = Math.PI / 2
-      addMesh(p, new T.ConeGeometry(0.022, 0.12, 16), material('#181b19', 0.85, 0.25), -1.50, 0, 0.06).rotation.z = Math.PI / 2
-      addMesh(p, new T.CylinderGeometry(0.056, 0.056, 0.20, 16), brassGold, 1.35, 0, 0.06).rotation.z = Math.PI / 2
-      addMesh(p, new T.CylinderGeometry(0.052, 0.052, 0.18, 16), material('#f28d9c', 0, 0.75), 1.50, 0, 0.06).rotation.z = Math.PI / 2
-      return p
-    }
-
-    const pencilYellow = createPencil('#f5b041')
-    stationeryGroup.add(pencilYellow)
-
-    const pencilNavy = createPencil('#2e4053')
-    stationeryGroup.add(pencilNavy)
-
-    const eraserGroup = new T.Group()
-    stationeryGroup.add(eraserGroup)
-    box(eraserGroup, 0.85, 0.48, 0.24, material('#fcfcfc', 0, 0.65), 0, 0, 0.12, 0.05)
-    box(eraserGroup, 0.52, 0.50, 0.25, material('#1f618d', 0, 0.7), 0.15, 0, 0.125, 0.03)
-
-    // =========================================================================
-    // ASSET 9: 3D METALLIC WIRE PAPERCLIPS
+    // ASSET 8: 3D METALLIC WIRE PAPERCLIPS
     // =========================================================================
     const clips = [new T.Group(), new T.Group(), new T.Group()]
     for (const clip of clips) {
@@ -807,7 +805,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     }
 
     // =========================================================================
-    // ASSET 10 & 11: 3D LAPTOP & RETRO GAMEBOY (GLTF + Enhanced 3D Geometry)
+    // ASSETS 9, 10, 11: AUTHENTIC GLTF PBR 3D MODELS (Laptop, GameBoy, PolyHaven Stationery)
     // =========================================================================
     const laptop = new T.Group()
     scene.add(laptop)
@@ -819,102 +817,44 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     gameboy.userData = { key: 'contact' }
     clickableObjects.push({ mesh: gameboy, key: 'contact', originalScale: 1.0 })
 
-    // Detailed 3D Retro GameBoy Assembly (Immediately visible with PBR materials)
-    const gbBodyMat = material('#d6d8d5', 0.05, 0.65, 0.25)
-    box(gameboy, 2.05, 3.2, 0.48, gbBodyMat, 0, 0, 0.24, 0.18)
+    const stationeryPencilYellow = new T.Group()
+    scene.add(stationeryPencilYellow)
 
-    // Curved battery grip contour & bevels on sides
-    box(gameboy, 1.75, 1.45, 0.05, material('#373c40', 0.1, 0.5, 0.6), 0, 0.65, 0.49, 0.08)
+    const stationeryEraser = new T.Group()
+    scene.add(stationeryEraser)
 
-    // Retro LCD screen
-    const gbCanvas = document.createElement('canvas')
-    gbCanvas.width = 256; gbCanvas.height = 256
-    const gbCtx = gbCanvas.getContext('2d')!
-    gbCtx.fillStyle = '#8f9c18'; gbCtx.fillRect(0, 0, 256, 256)
-    gbCtx.fillStyle = '#1b341b'
-    gbCtx.font = 'bold 24px monospace'; gbCtx.textAlign = 'center'
-    gbCtx.fillText('HELLENS ✳', 128, 70)
-    gbCtx.font = '16px monospace'
-    gbCtx.fillText('PRESS START', 128, 115)
-    for (let bx = 0; bx < 5; bx++) {
-      for (let by = 0; by < 2; by++) {
-        gbCtx.fillRect(40 + bx * 36, 150 + by * 36, 30, 30)
-      }
-    }
-    const gbTex = new T.CanvasTexture(gbCanvas)
-    gbTex.colorSpace = T.SRGBColorSpace
-    addMesh(gameboy, new T.PlaneGeometry(1.35, 1.08), new T.MeshStandardMaterial({ map: gbTex, roughness: 0.35 }), 0, 0.65, 0.52)
-    addMesh(gameboy, new T.CircleGeometry(0.04, 16), material('#ff2200', 0, 0.1, 1.0), -0.72, 0.65, 0.525)
+    const stationeryPenFancy = new T.Group()
+    scene.add(stationeryPenFancy)
 
-    // D-Pad Cross
-    const dpadMat = material('#1b1e22', 0.05, 0.7, 0.1)
-    box(gameboy, 0.24, 0.72, 0.14, dpadMat, -0.48, -0.46, 0.54, 0.04)
-    box(gameboy, 0.72, 0.24, 0.14, dpadMat, -0.48, -0.46, 0.54, 0.04)
-    addMesh(gameboy, new T.SphereGeometry(0.06, 16, 16), dpadMat, -0.48, -0.46, 0.56)
-
-    // Magenta A & B buttons
-    const btnMat = material('#9c1b52', 0.05, 0.45, 0.5)
-    addMesh(gameboy, new T.CylinderGeometry(0.13, 0.13, 0.16, 24), btnMat, 0.58, -0.34, 0.54).rotation.x = Math.PI / 2
-    addMesh(gameboy, new T.CylinderGeometry(0.13, 0.13, 0.16, 24), btnMat, 0.34, -0.52, 0.54).rotation.x = Math.PI / 2
-
-    // Select & Start rubber pills
-    const pillMat = material('#52585c', 0, 0.8, 0)
-    const p1 = box(gameboy, 0.32, 0.09, 0.07, pillMat, -0.16, -1.02, 0.51, 0.03)
-    p1.rotation.z = -0.45
-    const p2 = box(gameboy, 0.32, 0.09, 0.07, pillMat, 0.16, -1.02, 0.51, 0.03)
-    p2.rotation.z = -0.45
-
-    // Acoustic speaker slits
-    for (let i = 0; i < 6; i++) {
-      const slit = box(gameboy, 0.04, 0.36, 0.02, plasticDark, 0.45 + i * 0.08, -1.05 + i * 0.03, 0.50, 0.01)
-      slit.rotation.z = -0.5
-    }
-
-    // High-Detail 3D MacBook Assembly
-    box(laptop, 4.4, 3.1, 0.14, aluminumSilver, 0, 0, 0.07, 0.14)
-    box(laptop, 4.15, 1.85, 0.04, plasticDark, 0, 0.45, 0.15, 0.06)
-    box(laptop, 1.5, 0.95, 0.02, aluminumSilver, 0, -0.9, 0.15, 0.04)
-
-    // Keyboard keys rows
-    const keysRow = (y: number, count: number, w: number) => {
-      const totalW = count * (w + 0.04)
-      for (let i = 0; i < count; i++) {
-        const x = -totalW / 2 + i * (w + 0.04) + w / 2
-        box(laptop, w, 0.22, 0.035, plasticDark, x, y, 0.165, 0.02)
-      }
-    }
-    keysRow(1.15, 14, 0.24)
-    keysRow(0.88, 14, 0.24)
-    keysRow(0.61, 13, 0.26)
-    keysRow(0.34, 12, 0.29)
-    keysRow(0.07, 8, 0.38)
-
-    // Glowing Open Laptop Screen
-    const screenLid = new T.Group()
-    laptop.add(screenLid)
-    screenLid.position.set(0, 1.55, 0.07)
-    screenLid.rotation.x = -Math.PI * 0.42 // Open lid angle
-
-    box(screenLid, 4.4, 2.9, 0.08, aluminumSilver, 0, 1.45, 0.04, 0.14)
-    box(screenLid, 4.15, 2.65, 0.02, plasticDark, 0, 1.45, 0.085, 0.04)
-
-    // Dashboard UI Canvas Texture on screen
+    // Dynamic Live Dashboard UI Canvas Texture for Laptop Screen
     const dashCanvas = document.createElement('canvas')
-    dashCanvas.width = 1024; dashCanvas.height = 640
+    dashCanvas.width = 1024
+    dashCanvas.height = 640
     const dCtx = dashCanvas.getContext('2d')!
-    dCtx.fillStyle = '#0a100d'; dCtx.fillRect(0, 0, 1024, 640)
-    dCtx.fillStyle = '#14221b'; dCtx.fillRect(30, 30, 964, 80)
-    dCtx.fillStyle = '#ffffff'; dCtx.font = 'bold 28px Arial'; dCtx.fillText('HELLENS ANALYTICS PLATFORM', 60, 80)
+    dCtx.fillStyle = '#0a100d'
+    dCtx.fillRect(0, 0, 1024, 640)
+    dCtx.fillStyle = '#14221b'
+    dCtx.fillRect(30, 30, 964, 80)
+    dCtx.fillStyle = '#ffffff'
+    dCtx.font = 'bold 28px Arial'
+    dCtx.fillText('HELLENS ANALYTICS PLATFORM', 60, 80)
     // KPI Cards
     const kpiColors = ['#e8592c', '#218358', '#3b82f6']
     for (let k = 0; k < 3; k++) {
-      dCtx.fillStyle = '#111d16'; dCtx.fillRect(30 + k * 330, 140, 300, 150)
-      dCtx.fillStyle = kpiColors[k]; dCtx.fillRect(30 + k * 330, 140, 300, 6)
-      dCtx.fillStyle = '#ffffff'; dCtx.font = 'bold 36px Arial'; dCtx.fillText(['98.4%', '$1.4M', '45.2k'][k], 60 + k * 330, 230)
+      dCtx.fillStyle = '#111d16'
+      dCtx.fillRect(30 + k * 330, 140, 300, 150)
+      dCtx.fillStyle = kpiColors[k]
+      dCtx.fillRect(30 + k * 330, 140, 300, 6)
+      dCtx.fillStyle = '#ffffff'
+      dCtx.font = 'bold 36px Arial'
+      dCtx.fillText(['98.4%', '$1.4M', '45.2k'][k], 60 + k * 330, 230)
     }
     // Main Chart
-    dCtx.fillStyle = '#111d16'; dCtx.fillRect(30, 320, 964, 280)
-    dCtx.strokeStyle = '#e8592c'; dCtx.lineWidth = 4; dCtx.beginPath()
+    dCtx.fillStyle = '#111d16'
+    dCtx.fillRect(30, 320, 964, 280)
+    dCtx.strokeStyle = '#e8592c'
+    dCtx.lineWidth = 4
+    dCtx.beginPath()
     for (let pt = 0; pt < 10; pt++) {
       const cx = 60 + pt * 100
       const cy = 540 - Math.sin(pt * 0.8) * 120 - pt * 10
@@ -924,12 +864,147 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
 
     const dashTex = new T.CanvasTexture(dashCanvas)
     dashTex.colorSpace = T.SRGBColorSpace
-    const screenMesh = new T.Mesh(
-      new T.PlaneGeometry(3.95, 2.45),
-      new T.MeshBasicMaterial({ map: dashTex })
+
+    // Load authentic 3D models via GLTFLoader
+    const gltfLoader = new GLTFLoader()
+
+    // Helper to center and scale any GLTF model cleanly
+    const fitAndCenter = (modelRoot: T.Object3D, targetDim: number) => {
+      const wrapper = new T.Group()
+      wrapper.add(modelRoot)
+      modelRoot.updateMatrixWorld(true)
+      const b = new T.Box3().setFromObject(modelRoot)
+      const center = b.getCenter(new T.Vector3())
+      modelRoot.position.sub(center)
+      const size = b.getSize(new T.Vector3())
+      const maxDim = Math.max(size.x, size.y, size.z)
+      wrapper.scale.setScalar(targetDim / maxDim)
+      return wrapper
+    }
+
+    // 1. MacBook Laptop Model
+    gltfLoader.load(
+      '/models/macbook_laptop.glb',
+      gltf => {
+        gltf.scene.rotation.set(Math.PI / 2, 0, 0)
+        dashTex.flipY = false
+        dashTex.needsUpdate = true
+
+        gltf.scene.traverse(o => {
+          if (o instanceof T.Mesh) {
+            o.castShadow = true
+            o.receiveShadow = true
+            if (o.material) {
+              o.material.roughness = Math.min(o.material.roughness, 0.45)
+            }
+            // Screen display mesh in macbook_laptop.glb is Material.003
+            if (o.name.includes('Material003') || o.name.includes('Material.003') || o.material?.name === 'Material.003') {
+              o.material = new T.MeshBasicMaterial({ map: dashTex })
+            }
+          }
+        })
+        const fittedLaptop = fitAndCenter(gltf.scene, 4.8)
+        laptop.add(fittedLaptop)
+        unifyLight(laptop)
+      },
+      undefined,
+      err => console.error('Failed loading macbook_laptop.glb:', err)
     )
-    screenMesh.position.set(0, 1.45, 0.10)
-    screenLid.add(screenMesh)
+
+    // 2. Retro GameBoy Model
+    gltfLoader.load(
+      '/models/retro_gameboy.glb',
+      gltf => {
+        gltf.scene.rotation.set(Math.PI / 2, 0, 0)
+
+        // Overlay authentic green dot-matrix LCD game screen
+        const gbCanvas = document.createElement('canvas')
+        gbCanvas.width = 512
+        gbCanvas.height = 512
+        const gbCtx = gbCanvas.getContext('2d')!
+        gbCtx.fillStyle = '#8f9c18'
+        gbCtx.fillRect(0, 0, 512, 512)
+        gbCtx.fillStyle = '#1b341b'
+        gbCtx.font = 'bold 44px monospace'
+        gbCtx.textAlign = 'center'
+        gbCtx.fillText('HELLENS ✳', 256, 120)
+        gbCtx.font = '32px monospace'
+        gbCtx.fillText('PRESS START', 256, 210)
+        gbCtx.fillText('SCORE: 99999', 256, 280)
+        for (let bx = 0; bx < 6; bx++) {
+          for (let by = 0; by < 2; by++) {
+            gbCtx.fillRect(70 + bx * 64, 340 + by * 64, 48, 48)
+          }
+        }
+        const gbTex = new T.CanvasTexture(gbCanvas)
+        gbTex.colorSpace = T.SRGBColorSpace
+        gbTex.flipY = false
+
+        gltf.scene.traverse(o => {
+          if (o instanceof T.Mesh) {
+            o.castShadow = true
+            o.receiveShadow = true
+            if (o.name.includes('glass')) {
+              o.material = new T.MeshPhysicalMaterial({
+                color: '#ffffff',
+                transparent: true,
+                opacity: 0.2,
+                roughness: 0.05,
+                transmission: 0.85,
+                clearcoat: 1.0,
+                ior: 1.5
+              })
+            }
+            // Real LCD screen mesh inside retro_gameboy.glb
+            if (o.name.includes('screen.001') || o.name.includes('screen001')) {
+              o.material = new T.MeshBasicMaterial({ map: gbTex })
+            }
+          }
+        })
+
+        const fittedGameboy = fitAndCenter(gltf.scene, 3.4)
+        gameboy.add(fittedGameboy)
+        unifyLight(gameboy)
+      },
+      undefined,
+      err => console.error('Failed loading retro_gameboy.glb:', err)
+    )
+
+    // 3. PolyHaven High-Res Stationery Models (Pencil, Eraser, Pen)
+    gltfLoader.load(
+      '/models/stationery/stationery.gltf',
+      gltf => {
+        const placePart = (name: string, targetGroup: T.Group, targetLength: number) => {
+          const raw = gltf.scene.getObjectByName(name)
+          if (!raw) return
+          const clone = raw.clone()
+          clone.updateMatrixWorld(true)
+          const b = new T.Box3().setFromObject(clone)
+          const center = b.getCenter(new T.Vector3())
+          clone.position.sub(center)
+
+          const size = b.getSize(new T.Vector3())
+          const maxDim = Math.max(size.x, size.y, size.z)
+          const scale = targetLength / maxDim
+          clone.scale.setScalar(scale)
+
+          clone.traverse(o => {
+            if (o instanceof T.Mesh) {
+              o.castShadow = true
+              o.receiveShadow = true
+            }
+          })
+          targetGroup.add(clone)
+          unifyLight(targetGroup)
+        }
+
+        placePart('stationery_supplies_pencil_new_a', stationeryPencilYellow, 2.8)
+        placePart('stationery_supplies_eraser', stationeryEraser, 0.85)
+        placePart('stationery_supplies_pen_fancy', stationeryPenFancy, 2.6)
+      },
+      undefined,
+      err => console.error('Failed loading stationery.gltf:', err)
+    )
 
     // Raycasting for 3D Object Interactivity
     const raycaster = new T.Raycaster()
@@ -1042,69 +1117,69 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       centerTitleGroup.position.set(0, mobile ? 0.35 : 0.28, 0)
       centerTitleGroup.scale.setScalar(mobile ? 0.65 : 0.88)
 
-      // Laptop (Top Left)
-      laptop.position.set(-halfX * 0.88, halfY * 0.72, 0.02)
-      laptop.scale.setScalar((mobile ? 0.72 : 1.05) * scaleMultiplier)
-      laptop.rotation.set(0.12, 0.14, 0.36)
+      // Laptop (Top-Left): positioned naturally with ample clearance below nav strip
+      laptop.position.set(-halfX * 0.70, halfY * 0.24, 0.02)
+      laptop.scale.setScalar((mobile ? 0.72 : 0.98) * scaleMultiplier)
+      laptop.rotation.set(0.12, 0.08, 0.20)
 
-      // DSLR Camera (Top Right Corner resting on photo prints)
-      cameraProp.position.set(halfX * 0.86, halfY * 0.72, 0.02)
+      // DSLR Camera (Top-Right Corner resting on photo prints)
+      cameraProp.position.set(halfX * 0.84, halfY * 0.68, 0.02)
       cameraProp.scale.setScalar((mobile ? 0.75 : 0.95) * scaleMultiplier)
       cameraProp.rotation.set(0.18, -0.15, -0.42)
 
-      // Retro Gameboy (Upper-Mid Right Desk, between camera and polaroid)
-      gameboy.position.set(halfX * 0.76, 0.95, 0.02)
-      gameboy.scale.setScalar((mobile ? 0.72 : 0.92) * scaleMultiplier)
-      gameboy.rotation.set(0.12, -0.06, -0.22)
+      // Retro Gameboy (Mid-Right Desk, between camera and polaroid)
+      gameboy.position.set(halfX * 0.75, 0.88, 0.02)
+      gameboy.scale.setScalar((mobile ? 0.72 : 0.94) * scaleMultiplier)
+      gameboy.rotation.set(0.10, -0.05, -0.18)
 
-      // Sketchbook (Bottom Left)
+      // Sketchbook (Bottom-Left)
       sketchbook.position.set(-halfX * 0.75, -halfY * 0.65, 0.02)
       sketchbook.scale.setScalar((mobile ? 0.75 : 1.0) * scaleMultiplier)
       sketchbook.rotation.set(0.08, 0.04, 0.10)
 
-      // Yellow Drafting Pencil (Beside sketchbook at bottom-left)
-      pencilYellow.position.set(-halfX * 0.45, -halfY * 0.75, 0.02)
-      pencilYellow.rotation.z = 0.22
-      pencilYellow.scale.setScalar(scaleMultiplier)
+      // PolyHaven Yellow Drafting Pencil (Beside sketchbook at bottom-left)
+      stationeryPencilYellow.position.set(-halfX * 0.42, -halfY * 0.72, 0.02)
+      stationeryPencilYellow.rotation.z = 0.24
+      stationeryPencilYellow.scale.setScalar(scaleMultiplier)
 
-      // Artist Eraser (Bottom Left near pencil)
-      eraserGroup.position.set(-halfX * 0.55, -halfY * 0.88, 0.02)
-      eraserGroup.rotation.z = 0.25
-      eraserGroup.scale.setScalar(scaleMultiplier)
+      // PolyHaven Artist Eraser (Bottom-Left near pencil)
+      stationeryEraser.position.set(-halfX * 0.52, -halfY * 0.86, 0.02)
+      stationeryEraser.rotation.z = 0.28
+      stationeryEraser.scale.setScalar(scaleMultiplier)
 
-      // Sticky Note Pad (Left Center under laptop)
-      stickyNote.position.set(-halfX * 0.72, 0.75, 0.02)
+      // Sticky Note Pad (Left-Center under laptop)
+      stickyNote.position.set(-halfX * 0.74, 0.68, 0.02)
       stickyNote.scale.setScalar((mobile ? 0.78 : 0.95) * scaleMultiplier)
       stickyNote.rotation.z = -0.08
 
-      // Polaroid Photo Print (Right Center below Gameboy)
-      polaroid.position.set(halfX * 0.78, -0.95, 0.02)
+      // Polaroid Photo Print (Right-Center below Gameboy)
+      polaroid.position.set(halfX * 0.78, -0.92, 0.02)
       polaroid.scale.setScalar((mobile ? 0.75 : 0.98) * scaleMultiplier)
       polaroid.rotation.z = 0.12
 
-      // Navy Design Pencil (Near Ruler at Bottom Right)
-      pencilNavy.position.set(halfX * 0.38, -halfY * 0.82, 0.02)
-      pencilNavy.rotation.z = -0.42
-      pencilNavy.scale.setScalar(scaleMultiplier)
+      // PolyHaven Designer Pen (Near Ruler at Bottom-Right)
+      stationeryPenFancy.position.set(halfX * 0.36, -halfY * 0.80, 0.02)
+      stationeryPenFancy.rotation.z = -0.42
+      stationeryPenFancy.scale.setScalar(scaleMultiplier)
 
-      // STABILO Boss Highlighter (Bottom Right)
-      highlighter.position.set(halfX * 0.65, -halfY * 0.62, 0.02)
+      // STABILO Boss Highlighter (Bottom-Right)
+      highlighter.position.set(halfX * 0.64, -halfY * 0.60, 0.02)
       highlighter.scale.setScalar((mobile ? 0.75 : 0.92) * scaleMultiplier)
       highlighter.rotation.z = 0.45
 
-      // Stainless Steel Ruler (Bottom Right border)
+      // Stainless Steel Ruler (Bottom-Right border)
       ruler.position.set(halfX * 0.72, -halfY * 0.85, 0.02)
       ruler.scale.setScalar((mobile ? 0.75 : 0.98) * scaleMultiplier)
       ruler.rotation.z = -0.58
 
-      // EarPods (Right Center draping towards bottom)
-      earpods.position.set(halfX * 0.52, -0.85, 0.02)
+      // EarPods (Right-Center draping towards bottom)
+      earpods.position.set(halfX * 0.50, -0.85, 0.02)
       earpods.scale.setScalar((mobile ? 0.75 : 0.92) * scaleMultiplier)
       earpods.rotation.z = -0.15
 
       // Paperclips scattered naturally
       clips.forEach((c, i) => {
-        c.position.set(halfX * 0.58 - i * 0.45, -halfY * 0.82 - i * 0.35, 0.01)
+        c.position.set(halfX * 0.56 - i * 0.42, -halfY * 0.80 - i * 0.32, 0.01)
         c.rotation.z = 0.35 + i * 0.6
         c.scale.setScalar((mobile ? 0.68 : 0.85) * scaleMultiplier)
       })

@@ -124,8 +124,8 @@ html, body, #root {
    ========================================================================== */
 .paper-nav-wrapper {
   position: absolute;
-  top: 3.2%;
-  left: 55%;
+  top: 3.0%;
+  left: 50%;
   transform: translateX(-50%);
   width: min(72vw, 700px);
   z-index: 15;
