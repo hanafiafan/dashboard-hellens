@@ -9,8 +9,7 @@ import {
   BloomEffect,
   VignetteEffect,
   BlendFunction,
-  SMAAEffect,
-  TiltShiftEffect
+  SMAAEffect
 } from 'postprocessing'
 import { N8AOPostPass } from 'n8ao'
 import { createMatSurface } from './matSurface'
@@ -431,27 +430,136 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       }
     }
 
-    sCtx.strokeStyle = '#36403a'
-    sCtx.lineWidth = 4
-    sCtx.strokeRect(70, 70, 400, 280)
-    sCtx.strokeRect(90, 95, 140, 40)
-    sCtx.strokeRect(90, 150, 360, 180)
-    sCtx.strokeRect(70, 380, 400, 300)
-    sCtx.strokeRect(90, 410, 170, 120)
-    sCtx.strokeRect(280, 410, 170, 120)
+    // Left Page: Desktop Web App Wireframe
+    sCtx.strokeStyle = '#323d36'
+    sCtx.lineWidth = 3
+    sCtx.strokeRect(60, 60, 410, 300)
+    // Top app bar
+    sCtx.fillStyle = '#e8e5d8'
+    sCtx.fillRect(62, 62, 406, 36)
+    sCtx.fillStyle = '#323d36'
+    for (let c = 0; c < 3; c++) {
+      sCtx.beginPath()
+      sCtx.arc(80 + c * 16, 80, 4, 0, Math.PI * 2)
+      sCtx.fill()
+    }
+    sCtx.font = 'bold 14px monospace'
+    sCtx.fillText('analytics.hellens.design', 140, 85)
 
-    sCtx.font = 'bold 28px Arial'
-    sCtx.fillStyle = '#222b26'
-    sCtx.fillText('DASHBOARD ARCHITECTURE', 530, 110)
-    sCtx.font = '20px Arial'
-    sCtx.fillStyle = '#55625a'
-    sCtx.fillText('User Flows, KPI Hierarchy & Design Tokens', 530, 150)
+    // Left Navigation Rail
+    sCtx.strokeRect(60, 98, 70, 262)
+    for (let m = 0; m < 5; m++) {
+      sCtx.fillRect(78, 120 + m * 36, 34, 6)
+    }
 
+    // Top Metric Cards on wireframe
+    sCtx.fillStyle = '#e8592c'
+    sCtx.fillRect(150, 115, 85, 4)
+    sCtx.strokeRect(150, 115, 85, 55)
+    sCtx.font = 'bold 18px Arial'
+    sCtx.fillText('$124K', 160, 150)
+
+    sCtx.fillStyle = '#10b981'
+    sCtx.fillRect(250, 115, 85, 4)
+    sCtx.strokeRect(250, 115, 85, 55)
+    sCtx.fillText('+24.8%', 256, 150)
+
+    sCtx.fillStyle = '#3b82f6'
+    sCtx.fillRect(350, 115, 105, 4)
+    sCtx.strokeRect(350, 115, 105, 55)
+    sCtx.fillText('18.2K MAU', 356, 150)
+
+    // Mini Chart area in desktop wireframe
+    sCtx.strokeStyle = '#323d36'
+    sCtx.strokeRect(150, 185, 305, 160)
+    sCtx.strokeStyle = '#e8592c'
+    sCtx.lineWidth = 2.5
+    sCtx.beginPath()
+    sCtx.moveTo(165, 310)
+    sCtx.bezierCurveTo(220, 240, 280, 290, 435, 210)
+    sCtx.stroke()
+
+    // Left Page Bottom: Mobile Viewport Wireframe & Annotation
+    sCtx.strokeStyle = '#323d36'
+    sCtx.lineWidth = 3
+    sCtx.strokeRect(60, 390, 200, 330)
+    // Phone Notch & Status bar
+    sCtx.fillRect(115, 395, 90, 8)
+    // Mobile card feed
+    sCtx.strokeRect(75, 420, 170, 75)
+    sCtx.strokeRect(75, 510, 170, 75)
+    sCtx.strokeRect(75, 600, 170, 75)
+    // Mobile bottom bar
+    sCtx.strokeRect(60, 685, 200, 35)
+
+    // Notes next to mobile wireframe
+    sCtx.font = 'italic bold 20px "Caveat", cursive'
+    sCtx.fillStyle = '#3a4b40'
+    sCtx.fillText('Mobile-First Responsive Grid', 280, 420)
+    sCtx.font = '16px "Caveat", cursive'
+    sCtx.fillText('• 4-col auto-wrap layout', 280, 455)
+    sCtx.fillText('• Fluid clamp() typography', 280, 485)
+    sCtx.fillText('• High-contrast micro-charts', 280, 515)
+    sCtx.fillText('• 60 FPS Canvas rendering', 280, 545)
+
+    // Right Page: Title & Architecture Specs
+    sCtx.font = 'bold 30px "Outfit", Arial'
+    sCtx.fillStyle = '#1c241f'
+    sCtx.fillText('SYSTEM ARCHITECTURE', 530, 105)
+    sCtx.font = '19px Arial'
+    sCtx.fillStyle = '#55655b'
+    sCtx.fillText('Design Tokens, Hierarchy & Realtime Visuals', 530, 140)
+
+    // Wireframe Box 1: Bar Chart
     sCtx.strokeStyle = '#e8592c'
     sCtx.lineWidth = 3
-    sCtx.strokeRect(550, 190, 190, 110)
-    sCtx.strokeRect(760, 190, 190, 110)
-    sCtx.strokeRect(550, 320, 400, 220)
+    sCtx.strokeRect(530, 180, 200, 120)
+    sCtx.fillStyle = '#e8592c'
+    for (let b = 0; b < 5; b++) {
+      sCtx.fillRect(550 + b * 36, 280 - (b + 1) * 16, 22, (b + 1) * 16)
+    }
+
+    // Wireframe Box 2: Circular Progress Donut
+    sCtx.strokeStyle = '#10b981'
+    sCtx.strokeRect(750, 180, 210, 120)
+    sCtx.beginPath()
+    sCtx.lineWidth = 8
+    sCtx.arc(855, 240, 36, 0, Math.PI * 1.65)
+    sCtx.stroke()
+    sCtx.fillStyle = '#10b981'
+    sCtx.font = 'bold 22px Arial'
+    sCtx.fillText('94.2%', 832, 248)
+
+    // Wireframe Box 3: Main Trend Analytics Curve
+    sCtx.strokeStyle = '#323d36'
+    sCtx.lineWidth = 3
+    sCtx.strokeRect(530, 320, 430, 240)
+    sCtx.font = 'bold 16px Arial'
+    sCtx.fillStyle = '#323d36'
+    sCtx.fillText('ENGAGEMENT ACCELERATION', 550, 350)
+
+    // Spline curve
+    sCtx.strokeStyle = '#e8592c'
+    sCtx.lineWidth = 4
+    sCtx.beginPath()
+    sCtx.moveTo(555, 520)
+    sCtx.bezierCurveTo(650, 420, 740, 490, 935, 380)
+    sCtx.stroke()
+    // Axis line
+    sCtx.strokeStyle = '#8a9b90'
+    sCtx.lineWidth = 2
+    sCtx.beginPath()
+    sCtx.moveTo(550, 525)
+    sCtx.lineTo(940, 525)
+    sCtx.stroke()
+
+    // Designer Handwritten Signature / Approval stamp
+    sCtx.font = 'italic bold 24px "Caveat", cursive'
+    sCtx.fillStyle = '#e8592c'
+    sCtx.fillText('Approved for Production ✓', 540, 600)
+    sCtx.font = '16px monospace'
+    sCtx.fillStyle = '#55655b'
+    sCtx.fillText('HELLENS DESIGN SYSTEM v2.4', 540, 630)
 
     const sketchTex = new T.CanvasTexture(sketchCanvas)
     sketchTex.colorSpace = T.SRGBColorSpace
@@ -514,7 +622,11 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     }
     peelGeo.computeVertexNormals()
     addMesh(stickyNote, peelGeo, new T.MeshStandardMaterial({ map: stickyTex, roughness: 0.85 }), 0, 0, 0.13)
-    makeTape(0, 1.05, 0.15, -0.06).parent = stickyNote
+    const stickyTape = new T.Mesh(new T.BoxGeometry(0.85, 0.35, 0.015), tapeMat)
+    stickyTape.position.set(0, 1.05, 0.15)
+    stickyTape.rotation.z = -0.06
+    stickyTape.castShadow = true
+    stickyNote.add(stickyTape)
 
     clickableObjects.push({ mesh: stickyNote, key: 'about', originalScale: 1.0 })
 
@@ -842,39 +954,188 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     dashCanvas.width = 1024
     dashCanvas.height = 640
     const dCtx = dashCanvas.getContext('2d')!
-    dCtx.fillStyle = '#0a100d'
+    dCtx.fillStyle = '#0e1713'
     dCtx.fillRect(0, 0, 1024, 640)
-    dCtx.fillStyle = '#14221b'
-    dCtx.fillRect(30, 30, 964, 80)
+    // Window Header Bar
+    dCtx.fillStyle = '#182820'
+    dCtx.fillRect(20, 20, 984, 70)
+    dCtx.fillStyle = '#e8592c'
+    dCtx.beginPath()
+    dCtx.arc(50, 55, 10, 0, Math.PI * 2)
+    dCtx.fill()
+    dCtx.fillStyle = '#f59e0b'
+    dCtx.beginPath()
+    dCtx.arc(80, 55, 10, 0, Math.PI * 2)
+    dCtx.fill()
+    dCtx.fillStyle = '#10b981'
+    dCtx.beginPath()
+    dCtx.arc(110, 55, 10, 0, Math.PI * 2)
+    dCtx.fill()
     dCtx.fillStyle = '#ffffff'
-    dCtx.font = 'bold 28px Arial'
-    dCtx.fillText('HELLENS ANALYTICS PLATFORM', 60, 80)
-    // KPI Cards
-    const kpiColors = ['#e8592c', '#218358', '#3b82f6']
-    for (let k = 0; k < 3; k++) {
-      dCtx.fillStyle = '#111d16'
-      dCtx.fillRect(30 + k * 330, 140, 300, 150)
-      dCtx.fillStyle = kpiColors[k]
-      dCtx.fillRect(30 + k * 330, 140, 300, 6)
+    dCtx.font = 'bold 24px Arial'
+    dCtx.fillText('HELLENS ANALYTICS PLATFORM', 150, 63)
+
+    // KPI Metric Cards
+    const kpis = [
+      { label: 'CONVERSION', val: '98.4%', col: '#e8592c' },
+      { label: 'REVENUE ARR', val: '$1.42M', col: '#10b981' },
+      { label: 'ACTIVE USERS', val: '45.2K', col: '#3b82f6' }
+    ]
+    kpis.forEach((k, idx) => {
+      const kx = 20 + idx * 335
+      dCtx.fillStyle = '#132019'
+      dCtx.fillRect(kx, 110, 315, 130)
+      dCtx.fillStyle = k.col
+      dCtx.fillRect(kx, 110, 315, 5)
+      dCtx.font = '600 16px Arial'
+      dCtx.fillStyle = '#7a9084'
+      dCtx.fillText(k.label, kx + 24, 145)
       dCtx.fillStyle = '#ffffff'
       dCtx.font = 'bold 36px Arial'
-      dCtx.fillText(['98.4%', '$1.4M', '45.2k'][k], 60 + k * 330, 230)
-    }
-    // Main Chart
-    dCtx.fillStyle = '#111d16'
-    dCtx.fillRect(30, 320, 964, 280)
+      dCtx.fillText(k.val, kx + 24, 200)
+    })
+
+    // Chart Area
+    dCtx.fillStyle = '#132019'
+    dCtx.fillRect(20, 260, 984, 350)
+    dCtx.fillStyle = '#556b60'
+    dCtx.font = '600 18px Arial'
+    dCtx.fillText('PERFORMANCE TRAJECTORY (LIVE)', 50, 300)
+
+    // Glowing spline line
     dCtx.strokeStyle = '#e8592c'
-    dCtx.lineWidth = 4
+    dCtx.lineWidth = 5
     dCtx.beginPath()
-    for (let pt = 0; pt < 10; pt++) {
-      const cx = 60 + pt * 100
-      const cy = 540 - Math.sin(pt * 0.8) * 120 - pt * 10
-      pt === 0 ? dCtx.moveTo(cx, cy) : dCtx.lineTo(cx, cy)
-    }
+    const pts = [520, 480, 440, 490, 410, 370, 390, 340, 310, 290]
+    pts.forEach((py, i) => {
+      const px = 60 + i * 100
+      i === 0 ? dCtx.moveTo(px, py) : dCtx.lineTo(px, py)
+    })
     dCtx.stroke()
+
+    // Chart dots
+    pts.forEach((py, i) => {
+      const px = 60 + i * 100
+      dCtx.fillStyle = '#ffffff'
+      dCtx.beginPath()
+      dCtx.arc(px, py, 6, 0, Math.PI * 2)
+      dCtx.fill()
+    })
 
     const dashTex = new T.CanvasTexture(dashCanvas)
     dashTex.colorSpace = T.SRGBColorSpace
+
+    // Bespoke Stylized 3D MacBook Pro
+    const createBespokeMacBook = (w = 4.4, d = 2.9, h = 0.12) => {
+      const mbGroup = new T.Group()
+
+      const aluminum = new T.MeshPhysicalMaterial({
+        color: '#b8c0c8',
+        metalness: 0.85,
+        roughness: 0.35,
+        clearcoat: 0.25,
+        clearcoatRoughness: 0.2
+      })
+      const keyboardWellMat = new T.MeshStandardMaterial({
+        color: '#121416',
+        roughness: 0.65,
+        metalness: 0.2
+      })
+      const trackpadMat = new T.MeshPhysicalMaterial({
+        color: '#bec4ca',
+        metalness: 0.7,
+        roughness: 0.28,
+        clearcoat: 0.2
+      })
+
+      // 1. Lower Chassis (Base)
+      box(mbGroup, w, d, h, aluminum, 0, 0, h / 2, 0.08)
+
+      // 2. Keyboard Well
+      const kwW = w * 0.88
+      const kwH = d * 0.50
+      box(mbGroup, kwW, kwH, 0.02, keyboardWellMat, 0, d * 0.16, h + 0.005, 0.04)
+
+      // Keyboard texture with crisp keycaps
+      const kbCanvas = document.createElement('canvas')
+      kbCanvas.width = 1024
+      kbCanvas.height = 512
+      const kbCtx = kbCanvas.getContext('2d')!
+      kbCtx.fillStyle = '#16181b'
+      kbCtx.fillRect(0, 0, 1024, 512)
+
+      const rows = 6, cols = 14
+      const padX = 14, padY = 12
+      const keyW = (1024 - padX * (cols + 1)) / cols
+      const keyH = (512 - padY * (rows + 1)) / rows
+      kbCtx.fillStyle = '#22262a'
+      kbCtx.strokeStyle = 'rgba(255, 255, 255, 0.18)'
+      kbCtx.lineWidth = 1.5
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const kx = padX + c * (keyW + padX)
+          const ky = padY + r * (keyH + padY)
+          kbCtx.beginPath()
+          kbCtx.roundRect(kx, ky, keyW, keyH, 6)
+          kbCtx.fill()
+          kbCtx.stroke()
+        }
+      }
+      // Spacebar
+      kbCtx.fillStyle = '#22262a'
+      kbCtx.beginPath()
+      kbCtx.roundRect(padX + 3 * (keyW + padX), padY + 5 * (keyH + padY), (keyW + padX) * 6 - padX, keyH, 6)
+      kbCtx.fill()
+      kbCtx.stroke()
+
+      const kbTex = new T.CanvasTexture(kbCanvas)
+      kbTex.colorSpace = T.SRGBColorSpace
+      addMesh(mbGroup, new T.PlaneGeometry(kwW * 0.98, kwH * 0.98), new T.MeshStandardMaterial({ map: kbTex, roughness: 0.55 }), 0, d * 0.16, h + 0.02)
+
+      // 3. Trackpad
+      const tpW = w * 0.38
+      const tpH = d * 0.32
+      addMesh(mbGroup, new T.PlaneGeometry(tpW, tpH), trackpadMat, 0, -d * 0.28, h + 0.015)
+
+      // 4. Hinge
+      const hinge = addMesh(mbGroup, new T.CylinderGeometry(0.045, 0.045, w * 0.75, 16), keyboardWellMat, 0, d / 2 - 0.03, h + 0.04)
+      hinge.rotation.z = Math.PI / 2
+
+      // 5. Display Lid (Tilted towards viewer)
+      const lidGroup = new T.Group()
+      mbGroup.add(lidGroup)
+      lidGroup.position.set(0, d / 2 - 0.04, h + 0.04)
+      lidGroup.rotation.x = 0.55
+
+      const lidH = d * 0.96
+      const lidThick = 0.06
+      box(lidGroup, w, lidH, lidThick, aluminum, 0, lidH / 2, -lidThick / 2, 0.08)
+
+      // Bezel
+      const bezelMat = new T.MeshPhysicalMaterial({ color: '#090b0d', roughness: 0.1, clearcoat: 1.0 })
+      addMesh(lidGroup, new T.PlaneGeometry(w * 0.96, lidH * 0.94), bezelMat, 0, lidH / 2, 0.005)
+
+      // Camera dot
+      addMesh(lidGroup, new T.CircleGeometry(0.02, 16), new T.MeshBasicMaterial({ color: '#1a3048' }), 0, lidH * 0.95, 0.008)
+
+      // OLED Screen Display
+      const screenW = w * 0.91
+      const screenH = lidH * 0.86
+      const screenMat = new T.MeshStandardMaterial({
+        map: dashTex,
+        emissiveMap: dashTex,
+        emissive: new T.Color(0xffffff),
+        emissiveIntensity: 0.9,
+        roughness: 0.15
+      })
+      addMesh(lidGroup, new T.PlaneGeometry(screenW, screenH), screenMat, 0, lidH / 2 - 0.01, 0.008)
+
+      return mbGroup
+    }
+
+    const laptopModel = createBespokeMacBook(4.4, 2.9, 0.12)
+    laptop.add(laptopModel)
+    unifyLight(laptop)
 
     // Load authentic 3D models via GLTFLoader
     const gltfLoader = new GLTFLoader()
@@ -892,48 +1153,6 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       wrapper.scale.setScalar(targetDim / maxDim)
       return wrapper
     }
-
-    // 1. MacBook Laptop Model (Authentic Unibody Aluminum Laptop)
-    gltfLoader.load(
-      '/models/macbook_laptop.glb',
-      gltf => {
-        // Snap screen hinge to connect seamlessly to chassis
-        const screenNode = gltf.scene.getObjectByName('Cube')
-        if (screenNode) {
-          screenNode.position.y += 2.3
-          screenNode.position.z -= 0.5
-        }
-
-        gltf.scene.rotation.set(0.85, 0, 0.25)
-        dashTex.flipY = false
-        dashTex.needsUpdate = true
-
-        gltf.scene.traverse(o => {
-          if (o instanceof T.Mesh) {
-            o.castShadow = true
-            o.receiveShadow = true
-            if (o.material) {
-              o.material.roughness = Math.min(o.material.roughness, 0.45)
-            }
-            // Screen display mesh in macbook_laptop.glb is Material.003
-            if (o.name.includes('Material003') || o.name.includes('Material.003') || o.material?.name === 'Material.003') {
-              o.material = new T.MeshStandardMaterial({
-                map: dashTex,
-                emissiveMap: dashTex,
-                emissive: new T.Color(0xffffff),
-                emissiveIntensity: 0.7,
-                roughness: 0.2
-              })
-            }
-          }
-        })
-        const fittedLaptop = fitAndCenter(gltf.scene, 4.4)
-        laptop.add(fittedLaptop)
-        unifyLight(laptop)
-      },
-      undefined,
-      err => console.error('Failed loading macbook_laptop.glb:', err)
-    )
 
     // 2. Retro GameBoy Model
     gltfLoader.load(
@@ -1102,33 +1321,26 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     n8aoPass.setQualityMode('Medium')
     composer.addPass(n8aoPass)
 
-    // Photorealistic Lens Bloom (Only hot specular glints & emissive screens bloom)
+    // Photorealistic Lens Bloom (Emissive screens and specular highlights)
     const bloomEffect = new BloomEffect({
       blendFunction: BlendFunction.SCREEN,
-      luminanceThreshold: 2.3,
-      luminanceSmoothing: 0.25,
-      intensity: 0.35,
+      luminanceThreshold: 1.8,
+      luminanceSmoothing: 0.3,
+      intensity: 0.4,
       mipmapBlur: true
     })
 
-    // Tilt-shift macro focus effect (miniature designer desk aesthetic)
-    const tiltShiftEffect = new TiltShiftEffect({
-      offset: 0.0,
-      focusArea: 0.65,
-      feather: 0.35
-    })
-
-    // Cinematic Lens Vignette
+    // Cinematic Lens Vignette (Subtle studio frame shading)
     const vignetteEffect = new VignetteEffect({
       eskil: false,
-      offset: 0.38,
-      darkness: 0.42
+      offset: 0.42,
+      darkness: 0.36
     })
 
-    // SMAA Subpixel Morphological Anti-Aliasing
+    // SMAA Subpixel Morphological Anti-Aliasing (Clean, crisp geometry edges)
     const smaaEffect = new SMAAEffect()
 
-    const effectPass = new EffectPass(camera, bloomEffect, tiltShiftEffect, vignetteEffect, smaaEffect)
+    const effectPass = new EffectPass(camera, bloomEffect, vignetteEffect, smaaEffect)
     composer.addPass(effectPass)
 
     // Animation Loop with Smooth Mouse Parallax
@@ -1189,70 +1401,70 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       centerTitleGroup.scale.setScalar(mobile ? 0.65 : 0.88)
 
       // Laptop (Top-Left): positioned naturally with ample clearance below nav strip
-      laptop.position.set(-halfX * 0.72, halfY * 0.42, 0.02)
-      laptop.scale.setScalar((mobile ? 0.72 : 0.95) * scaleMultiplier)
+      laptop.position.set(-halfX * 0.70, halfY * 0.27, 0.02)
+      laptop.scale.setScalar((mobile ? 0.72 : 0.88) * scaleMultiplier)
       laptop.rotation.set(0.04, 0.04, 0.06)
 
       // DSLR Camera (Top-Right Corner resting on photo prints)
-      cameraProp.position.set(halfX * 0.84, halfY * 0.68, 0.02)
-      cameraProp.scale.setScalar((mobile ? 0.75 : 0.95) * scaleMultiplier)
+      cameraProp.position.set(halfX * 0.78, halfY * 0.58, 0.02)
+      cameraProp.scale.setScalar((mobile ? 0.75 : 0.88) * scaleMultiplier)
       cameraProp.rotation.set(0.18, -0.15, -0.42)
 
       // Retro Gameboy (Mid-Right Desk, between camera and polaroid)
-      gameboy.position.set(halfX * 0.75, 0.88, 0.02)
-      gameboy.scale.setScalar((mobile ? 0.72 : 0.94) * scaleMultiplier)
+      gameboy.position.set(halfX * 0.72, halfY * 0.14, 0.02)
+      gameboy.scale.setScalar((mobile ? 0.72 : 0.88) * scaleMultiplier)
       gameboy.rotation.set(0.10, -0.05, -0.18)
 
       // Sketchbook (Bottom-Left)
-      sketchbook.position.set(-halfX * 0.75, -halfY * 0.65, 0.02)
-      sketchbook.scale.setScalar((mobile ? 0.75 : 1.0) * scaleMultiplier)
+      sketchbook.position.set(-halfX * 0.66, -halfY * 0.65, 0.02)
+      sketchbook.scale.setScalar((mobile ? 0.75 : 0.95) * scaleMultiplier)
       sketchbook.rotation.set(0.08, 0.04, 0.10)
 
       // PolyHaven Yellow Drafting Pencil (Beside sketchbook at bottom-left)
-      stationeryPencilYellow.position.set(-halfX * 0.42, -halfY * 0.72, 0.02)
+      stationeryPencilYellow.position.set(-halfX * 0.32, -halfY * 0.72, 0.02)
       stationeryPencilYellow.rotation.z = 0.24
       stationeryPencilYellow.scale.setScalar(scaleMultiplier)
 
       // PolyHaven Artist Eraser (Bottom-Left near pencil)
-      stationeryEraser.position.set(-halfX * 0.52, -halfY * 0.86, 0.02)
+      stationeryEraser.position.set(-halfX * 0.42, -halfY * 0.86, 0.02)
       stationeryEraser.rotation.z = 0.28
       stationeryEraser.scale.setScalar(scaleMultiplier)
 
-      // Sticky Note Pad (Left-Center under laptop)
-      stickyNote.position.set(-halfX * 0.74, 0.68, 0.02)
-      stickyNote.scale.setScalar((mobile ? 0.78 : 0.95) * scaleMultiplier)
+      // Sticky Note Pad (Left-Center cleanly below laptop, no overlap)
+      stickyNote.position.set(-halfX * 0.68, -halfY * 0.08, 0.02)
+      stickyNote.scale.setScalar((mobile ? 0.78 : 0.92) * scaleMultiplier)
       stickyNote.rotation.z = -0.08
 
       // Polaroid Photo Print (Right-Center below Gameboy)
-      polaroid.position.set(halfX * 0.78, -0.92, 0.02)
-      polaroid.scale.setScalar((mobile ? 0.75 : 0.98) * scaleMultiplier)
+      polaroid.position.set(halfX * 0.76, -halfY * 0.38, 0.02)
+      polaroid.scale.setScalar((mobile ? 0.75 : 0.90) * scaleMultiplier)
       polaroid.rotation.z = 0.12
 
       // PolyHaven Designer Pen (Near Ruler at Bottom-Right)
-      stationeryPenFancy.position.set(halfX * 0.36, -halfY * 0.80, 0.02)
+      stationeryPenFancy.position.set(halfX * 0.36, -halfY * 0.78, 0.02)
       stationeryPenFancy.rotation.z = -0.42
       stationeryPenFancy.scale.setScalar(scaleMultiplier)
 
       // STABILO Boss Highlighter (Bottom-Right)
-      highlighter.position.set(halfX * 0.64, -halfY * 0.60, 0.02)
-      highlighter.scale.setScalar((mobile ? 0.75 : 0.92) * scaleMultiplier)
+      highlighter.position.set(halfX * 0.56, -halfY * 0.64, 0.02)
+      highlighter.scale.setScalar((mobile ? 0.75 : 0.88) * scaleMultiplier)
       highlighter.rotation.z = 0.45
 
       // Stainless Steel Ruler (Bottom-Right border)
-      ruler.position.set(halfX * 0.72, -halfY * 0.85, 0.02)
-      ruler.scale.setScalar((mobile ? 0.75 : 0.98) * scaleMultiplier)
+      ruler.position.set(halfX * 0.70, -halfY * 0.82, 0.02)
+      ruler.scale.setScalar((mobile ? 0.75 : 0.92) * scaleMultiplier)
       ruler.rotation.z = -0.58
 
       // EarPods (Right-Center draping towards bottom)
-      earpods.position.set(halfX * 0.50, -0.85, 0.02)
-      earpods.scale.setScalar((mobile ? 0.75 : 0.92) * scaleMultiplier)
+      earpods.position.set(halfX * 0.44, -halfY * 0.06, 0.02)
+      earpods.scale.setScalar((mobile ? 0.75 : 0.88) * scaleMultiplier)
       earpods.rotation.z = -0.15
 
       // Paperclips scattered naturally
       clips.forEach((c, i) => {
-        c.position.set(halfX * 0.56 - i * 0.42, -halfY * 0.80 - i * 0.32, 0.01)
+        c.position.set(halfX * 0.52 - i * 0.42, -halfY * 0.82 - i * 0.12, 0.01)
         c.rotation.z = 0.35 + i * 0.6
-        c.scale.setScalar((mobile ? 0.68 : 0.85) * scaleMultiplier)
+        c.scale.setScalar((mobile ? 0.68 : 0.82) * scaleMultiplier)
       })
 
       clickableObjects.forEach(c => {
