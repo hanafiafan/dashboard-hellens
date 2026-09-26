@@ -2,6 +2,17 @@ import { useEffect, useRef } from 'react'
 import * as T from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import {
+  EffectComposer,
+  RenderPass,
+  EffectPass,
+  BloomEffect,
+  VignetteEffect,
+  BlendFunction,
+  SMAAEffect,
+  TiltShiftEffect
+} from 'postprocessing'
+import { N8AOPostPass } from 'n8ao'
 import { createMatSurface } from './matSurface'
 import { createFoliageTexture } from './foliage'
 
@@ -57,7 +68,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
 
     // 3. Disney / Blender 3D Studio Three-Point Lighting Setup
     // Key Sun: Warm golden sunlight from upper-left
-    const sun = new T.DirectionalLight(0xfff7ea, 3.8)
+    const sun = new T.DirectionalLight(0xfff7ea, 2.6)
     sun.position.set(-13, 16, 18)
     sun.castShadow = true
     sun.shadow.mapSize.set(2048, 2048)
@@ -68,21 +79,21 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     scene.add(sun)
 
     // Ambient & Hemisphere Sky Light
-    scene.add(new T.AmbientLight(0xffffff, 0.32))
-    scene.add(new T.HemisphereLight(0xdcf0ff, 0x182c20, 0.75))
+    scene.add(new T.AmbientLight(0xffffff, 0.42))
+    scene.add(new T.HemisphereLight(0xdcf0ff, 0x182c20, 0.85))
 
     // Crisp Blue Rim Light from upper-right (Pixar silhouette glint)
-    const rimLight = new T.PointLight(0x70b8ff, 85, 50)
+    const rimLight = new T.PointLight(0x70b8ff, 65, 50)
     rimLight.position.set(13, 10, 8)
     scene.add(rimLight)
 
     // Warm Studio Bounce Light from bottom-left
-    const warmBounce = new T.PointLight(0xffaa50, 48, 40)
+    const warmBounce = new T.PointLight(0xffaa50, 42, 40)
     warmBounce.position.set(-11, -12, 6)
     scene.add(warmBounce)
 
     // Soft Overhead Fill Light
-    const topFill = new T.PointLight(0xffffff, 28, 35)
+    const topFill = new T.PointLight(0xffffff, 22, 35)
     topFill.position.set(0, 0.5, 12)
     scene.add(topFill)
 
@@ -1062,6 +1073,51 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     window.addEventListener('mousemove', onPointerMove, { passive: true })
     window.addEventListener('click', onPointerDown)
 
+    // High-End Disney / Pixar Studio Post-Processing Pipeline
+    const composer = new EffectComposer(renderer, {
+      frameBufferType: T.HalfFloatType
+    })
+    composer.addPass(new RenderPass(scene, camera))
+
+    // Cinema-Grade Screen-Space Ambient Occlusion (N8AO)
+    const n8aoPass = new N8AOPostPass(scene, camera, container.clientWidth || 1920, container.clientHeight || 1080)
+    n8aoPass.configuration.aoRadius = 1.4
+    n8aoPass.configuration.distanceFalloff = 1.0
+    n8aoPass.configuration.intensity = 2.2
+    n8aoPass.configuration.color = new T.Color('#02140a')
+    n8aoPass.configuration.screenSpaceRadius = false
+    n8aoPass.setQualityMode('Medium')
+    composer.addPass(n8aoPass)
+
+    // Photorealistic Lens Bloom (Only hot specular glints & emissive screens bloom)
+    const bloomEffect = new BloomEffect({
+      blendFunction: BlendFunction.SCREEN,
+      luminanceThreshold: 2.3,
+      luminanceSmoothing: 0.25,
+      intensity: 0.35,
+      mipmapBlur: true
+    })
+
+    // Tilt-shift macro focus effect (miniature designer desk aesthetic)
+    const tiltShiftEffect = new TiltShiftEffect({
+      offset: 0.0,
+      focusArea: 0.65,
+      feather: 0.35
+    })
+
+    // Cinematic Lens Vignette
+    const vignetteEffect = new VignetteEffect({
+      eskil: false,
+      offset: 0.38,
+      darkness: 0.42
+    })
+
+    // SMAA Subpixel Morphological Anti-Aliasing
+    const smaaEffect = new SMAAEffect()
+
+    const effectPass = new EffectPass(camera, bloomEffect, tiltShiftEffect, vignetteEffect, smaaEffect)
+    composer.addPass(effectPass)
+
     // Animation Loop with Smooth Mouse Parallax
     let animId: number
     const animate = () => {
@@ -1081,7 +1137,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
         item.mesh.scale.lerp(new T.Vector3(targetScale, targetScale, targetScale), 0.12)
       })
 
-      renderer.render(scene, camera)
+      composer.render()
     }
     animId = requestAnimationFrame(animate)
 
@@ -1092,6 +1148,8 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       if (!w || !h) return
 
       renderer.setSize(w, h, false)
+      composer.setSize(w, h)
+      n8aoPass.setSize(w, h)
       camera.aspect = aspect
       camera.updateProjectionMatrix()
 
@@ -1224,6 +1282,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       canopyTexture.dispose()
       environment.dispose()
       grainMap.dispose()
+      composer.dispose()
       renderer.dispose()
       renderer.domElement.remove()
     }
