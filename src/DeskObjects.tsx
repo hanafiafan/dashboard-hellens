@@ -237,7 +237,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       canvasDraw: (ctx: CanvasRenderingContext2D, width: number, height: number) => void
     ) => {
       const pGroup = new T.Group()
-      box(pGroup, w, h, d, warmPaper, 0, 0, d / 2, 0.04)
+      box(pGroup, w, h, d, warmPaper, 0, 0, d / 2, 0.015)
 
       const c = document.createElement('canvas')
       c.width = 1536
@@ -270,13 +270,13 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
         new T.MeshStandardMaterial({ map: tex, roughness: 0.88 }),
         0,
         0,
-        d + 0.005
+        d + 0.002
       )
       return pGroup
     }
 
-    // 1. "HELLENS ✳" 3D Paper Cutout
-    const paperHellens = createTitlePaper(3.4, 0.92, 0.035, (ctx, cw, ch) => {
+    // 1. "HELLENS ✳" 3D Paper Cutout (Top-Left of Dashboard)
+    const paperHellens = createTitlePaper(3.2, 0.88, 0.018, (ctx, cw, ch) => {
       ctx.fillStyle = '#121815'
       ctx.font = '900 180px "Outfit", sans-serif'
       ctx.textAlign = 'center'
@@ -285,14 +285,14 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       ctx.fillStyle = '#e8592c'
       ctx.fillText('✳', cw * 0.84, ch * 0.52)
     })
-    paperHellens.position.set(-1.1, 1.45, 0.08)
+    paperHellens.position.set(-1.1, 1.35, 0.038)
     paperHellens.rotation.z = -0.055
     paperHellens.userData = { key: 'about' }
     clickableObjects.push({ mesh: paperHellens, key: 'about', originalScale: 1.0 })
     centerTitleGroup.add(paperHellens)
 
-    // 2. "Dashboard" 3D Paper Cutout
-    const paperDashboard = createTitlePaper(7.4, 2.2, 0.045, (ctx, cw, ch) => {
+    // 2. "Dashboard" 3D Paper Cutout (Base Layer on Mat)
+    const paperDashboard = createTitlePaper(7.0, 2.1, 0.02, (ctx, cw, ch) => {
       // Realistic vibrant Stabilo marker stroke with translucent edges
       const grad = ctx.createLinearGradient(cw * 0.05, 0, cw * 0.95, 0)
       grad.addColorStop(0, 'rgba(232, 89, 44, 0.75)')
@@ -308,14 +308,14 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       ctx.textBaseline = 'middle'
       ctx.fillText('Dashboard', cw * 0.5, ch * 0.46)
     })
-    paperDashboard.position.set(0, 0.2, 0.05)
+    paperDashboard.position.set(0, 0.15, 0.015)
     paperDashboard.rotation.z = -0.008
     paperDashboard.userData = { key: 'projects' }
     clickableObjects.push({ mesh: paperDashboard, key: 'projects', originalScale: 1.0 })
     centerTitleGroup.add(paperDashboard)
 
-    // 3. "Portfolio." 3D Paper Cutout
-    const paperPortfolio = createTitlePaper(4.8, 1.35, 0.04, (ctx, cw, ch) => {
+    // 3. "Portfolio." 3D Paper Cutout (Bottom-Right of Dashboard)
+    const paperPortfolio = createTitlePaper(4.6, 1.30, 0.018, (ctx, cw, ch) => {
       ctx.fillStyle = '#121815'
       ctx.font = '900 210px "Outfit", sans-serif'
       ctx.textAlign = 'center'
@@ -326,31 +326,11 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       ctx.arc(cw * 0.84, ch * 0.65, 18, 0, Math.PI * 2)
       ctx.fill()
     })
-    paperPortfolio.position.set(1.4, -1.05, 0.09)
+    paperPortfolio.position.set(1.3, -1.0, 0.040)
     paperPortfolio.rotation.z = 0.03
     paperPortfolio.userData = { key: 'contact' }
     clickableObjects.push({ mesh: paperPortfolio, key: 'contact', originalScale: 1.0 })
     centerTitleGroup.add(paperPortfolio)
-
-    // Frosted 3D Scotch Tape Strips on Dashboard paper
-    const tapeMat = new T.MeshPhysicalMaterial({
-      color: '#ffffff',
-      transmission: 0.88,
-      opacity: 0.82,
-      transparent: true,
-      roughness: 0.35,
-      ior: 1.45,
-      clearcoat: 0.8
-    })
-
-    const makeTape = (x: number, y: number, z: number, rotZ: number) => {
-      const tape = addMesh(centerTitleGroup, new T.BoxGeometry(0.85, 0.35, 0.015), tapeMat, x, y, z)
-      tape.rotation.z = rotZ
-      return tape
-    }
-    makeTape(-3.2, 1.25, 0.11, -0.15)
-    makeTape(3.2, -0.85, 0.11, 0.12)
-    makeTape(-0.2, 1.32, 0.11, 0.05)
 
     // Chalk Kicker right above HELLENS
     const kickerCanvas = document.createElement('canvas')
@@ -582,11 +562,15 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     // =========================================================================
     // ASSET 2: 3D STICKY NOTE PAD (Left-Center)
     // =========================================================================
+    // =========================================================================
+    // ASSET 2: REALISTIC 3D STICKY NOTE PAD (3"x3" Post-it, Left-Center)
+    // =========================================================================
     const stickyNote = new T.Group()
     scene.add(stickyNote)
     stickyNote.userData = { key: 'about' }
 
-    box(stickyNote, 2.3, 2.3, 0.12, canaryYellow, 0, 0, 0.06, 0.04)
+    // Real Post-it note pad: ~7.6cm x 7.6cm -> 1.18 x 1.18 units, thickness = 0.05
+    box(stickyNote, 1.18, 1.18, 0.05, canaryYellow, 0, 0, 0.025, 0.02)
 
     const stickyCanvas = document.createElement('canvas')
     stickyCanvas.width = 512
@@ -596,38 +580,32 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     stCtx.fillRect(0, 0, 512, 512)
 
     stCtx.fillStyle = '#1e2420'
-    stCtx.font = 'bold 38px "Outfit", sans-serif'
+    stCtx.font = 'bold 36px "Outfit", sans-serif'
     stCtx.fillText('PROCESS ✦', 45, 75)
-    stCtx.font = '600 30px "Outfit", sans-serif'
+    stCtx.font = '600 28px "Outfit", sans-serif'
     stCtx.fillText('✓  Ideas', 45, 140)
     stCtx.fillText('✓  Strategy', 45, 200)
     stCtx.fillText('✓  Design', 45, 260)
     stCtx.fillText('✓  Results', 45, 320)
 
     stCtx.fillStyle = '#e8592c'
-    stCtx.fillRect(330, 270, 28, 60)
-    stCtx.fillRect(370, 230, 28, 100)
-    stCtx.fillRect(410, 180, 28, 150)
-    stCtx.fillRect(450, 130, 28, 200)
+    stCtx.fillRect(320, 270, 26, 60)
+    stCtx.fillRect(360, 230, 26, 100)
+    stCtx.fillRect(400, 180, 26, 150)
+    stCtx.fillRect(440, 130, 26, 200)
 
     const stickyTex = new T.CanvasTexture(stickyCanvas)
     stickyTex.colorSpace = T.SRGBColorSpace
 
-    const peelGeo = new T.PlaneGeometry(2.26, 2.26, 16, 16)
+    const peelGeo = new T.PlaneGeometry(1.16, 1.16, 16, 16)
     const posAttr = peelGeo.attributes.position
     for (let i = 0; i < posAttr.count; i++) {
       const y = posAttr.getY(i)
-      const factor = Math.max(0, -y / 1.13)
-      posAttr.setZ(i, Math.pow(factor, 2.2) * 0.18)
+      const factor = Math.max(0, -y / 0.58)
+      posAttr.setZ(i, Math.pow(factor, 2.0) * 0.035)
     }
     peelGeo.computeVertexNormals()
-    addMesh(stickyNote, peelGeo, new T.MeshStandardMaterial({ map: stickyTex, roughness: 0.85 }), 0, 0, 0.13)
-    const stickyTape = new T.Mesh(new T.BoxGeometry(0.85, 0.35, 0.015), tapeMat)
-    stickyTape.position.set(0, 1.05, 0.15)
-    stickyTape.rotation.z = -0.06
-    stickyTape.castShadow = true
-    stickyNote.add(stickyTape)
-
+    addMesh(stickyNote, peelGeo, new T.MeshStandardMaterial({ map: stickyTex, roughness: 0.85 }), 0, 0, 0.055)
     clickableObjects.push({ mesh: stickyNote, key: 'about', originalScale: 1.0 })
 
     // =========================================================================
@@ -637,16 +615,18 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     scene.add(polaroid)
     polaroid.userData = { key: 'skills' }
 
-    box(polaroid, 2.5, 3.2, 0.05, warmPaper, 0, 0, 0.025, 0.05)
+    // Real Polaroid 600 print: 8.8cm x 10.7cm -> 1.30 x 1.58, thickness = 0.015
+    const polW = 1.30, polH = 1.58
+    box(polaroid, polW, polH, 0.015, warmPaper, 0, 0, 0.008, 0.02)
 
     const polCanvas = document.createElement('canvas')
     polCanvas.width = 512
-    polCanvas.height = 650
+    polCanvas.height = 620
     const pCtx = polCanvas.getContext('2d')!
     pCtx.fillStyle = '#f8f6ee'
-    pCtx.fillRect(0, 0, 512, 650)
+    pCtx.fillRect(0, 0, 512, 620)
     pCtx.fillStyle = '#dde8e0'
-    pCtx.fillRect(30, 30, 452, 452)
+    pCtx.fillRect(32, 32, 448, 448)
 
     pCtx.strokeStyle = '#1a432e'
     pCtx.lineWidth = 7
@@ -679,34 +659,34 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     swatches.forEach((col, idx) => {
       pCtx.fillStyle = col
       pCtx.beginPath()
-      pCtx.arc(80 + idx * 60, 535, 18, 0, Math.PI * 2)
+      pCtx.arc(80 + idx * 60, 530, 16, 0, Math.PI * 2)
       pCtx.fill()
     })
 
     pCtx.font = 'bold 22px "Outfit", sans-serif'
     pCtx.fillStyle = '#39463e'
-    pCtx.fillText('Color System →', 80, 600)
+    pCtx.fillText('Color System →', 80, 585)
 
     const polTex = new T.CanvasTexture(polCanvas)
     polTex.colorSpace = T.SRGBColorSpace
-    addMesh(polaroid, new T.PlaneGeometry(2.38, 3.08), new T.MeshPhysicalMaterial({ map: polTex, roughness: 0.35, clearcoat: 0.8 }), 0, 0, 0.055)
+    addMesh(polaroid, new T.PlaneGeometry(polW * 0.98, polH * 0.98), new T.MeshPhysicalMaterial({ map: polTex, roughness: 0.35, clearcoat: 0.8 }), 0, 0, 0.016)
 
-    // Binder clip
+    // Binder clip (scaled realistically: width ~ 0.36)
     const clipGroup = new T.Group()
     polaroid.add(clipGroup)
-    clipGroup.position.set(0, 1.5, 0.06)
-    const clipBody = addMesh(clipGroup, new T.CylinderGeometry(0.12, 0.12, 0.65, 3), plasticDark, 0, 0, 0.05)
+    clipGroup.position.set(0, polH / 2, 0.02)
+    const clipBody = addMesh(clipGroup, new T.CylinderGeometry(0.06, 0.06, 0.36, 3), plasticDark, 0, 0, 0.03)
     clipBody.rotation.z = Math.PI / 2
 
     const handleWire = (side: number) => {
       const curve = new T.CatmullRomCurve3([
-        new T.Vector3(-0.24, 0, 0.06),
-        new T.Vector3(-0.24, 0.35 * side, 0.14),
-        new T.Vector3(0, 0.42 * side, 0.16),
-        new T.Vector3(0.24, 0.35 * side, 0.14),
-        new T.Vector3(0.24, 0, 0.06)
+        new T.Vector3(-0.14, 0, 0.03),
+        new T.Vector3(-0.14, 0.20 * side, 0.08),
+        new T.Vector3(0, 0.24 * side, 0.10),
+        new T.Vector3(0.14, 0.20 * side, 0.08),
+        new T.Vector3(0.14, 0, 0.03)
       ])
-      return addMesh(clipGroup, new T.TubeGeometry(curve, 32, 0.016, 12, false), chromeMetal)
+      return addMesh(clipGroup, new T.TubeGeometry(curve, 24, 0.009, 10, false), chromeMetal)
     }
     handleWire(1)
     handleWire(-1)
@@ -714,91 +694,96 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     clickableObjects.push({ mesh: polaroid, key: 'skills', originalScale: 1.0 })
 
     // =========================================================================
-    // ASSET 4: 3D STABILO BOSS HIGHLIGHTER (Bottom-Right)
+    // ASSET 4: REALISTIC 3D STABILO BOSS HIGHLIGHTER (Bottom-Right)
     // =========================================================================
     const highlighter = new T.Group()
     scene.add(highlighter)
     highlighter.userData = { key: 'contact' }
 
-    box(highlighter, 0.95, 2.1, 0.42, neonOrange, 0, 0, 0.21, 0.18)
-    box(highlighter, 1.02, 0.85, 0.46, plasticDark, 0, 1.35, 0.23, 0.12)
-    box(highlighter, 0.16, 0.72, 0.14, plasticDark, 0, 1.35, 0.50, 0.04)
+    // Real dimensions: 2.7cm wide x 10.5cm long x 1.5cm thick -> 0.42 x 1.55 x 0.22
+    const hlW = 0.42, hlL = 1.55, hlD = 0.22
+    // Body (Neon orange)
+    box(highlighter, hlW, hlL * 0.65, hlD, neonOrange, 0, -hlL * 0.17, hlD / 2, 0.06)
+    // Cap (Matte Dark)
+    box(highlighter, hlW * 1.04, hlL * 0.35, hlD * 1.06, plasticDark, 0, hlL * 0.33, hlD / 2, 0.05)
+    // Cap clip
+    box(highlighter, 0.10, hlL * 0.28, 0.06, plasticDark, 0, hlL * 0.33, hlD + 0.03, 0.02)
 
     const hlCanvas = document.createElement('canvas')
-    hlCanvas.width = 256
-    hlCanvas.height = 512
+    hlCanvas.width = 128
+    hlCanvas.height = 384
     const hCtx = hlCanvas.getContext('2d')!
     hCtx.fillStyle = '#ff5722'
-    hCtx.fillRect(0, 0, 256, 512)
+    hCtx.fillRect(0, 0, 128, 384)
     hCtx.save()
-    hCtx.translate(128, 256)
+    hCtx.translate(64, 192)
     hCtx.rotate(-Math.PI / 2)
-    hCtx.font = '900 48px "Outfit", Arial'
+    hCtx.font = '900 36px "Outfit", Arial'
     hCtx.fillStyle = '#ffffff'
     hCtx.textAlign = 'center'
-    hCtx.fillText('STABILO', 0, -10)
-    hCtx.font = '800 36px "Outfit", Arial'
-    hCtx.fillText('BOSS', 0, 40)
+    hCtx.fillText('STABILO', 0, -6)
+    hCtx.font = '800 26px "Outfit", Arial'
+    hCtx.fillText('BOSS', 0, 26)
     hCtx.restore()
 
     const hlTex = new T.CanvasTexture(hlCanvas)
     hlTex.colorSpace = T.SRGBColorSpace
-    addMesh(highlighter, new T.PlaneGeometry(0.88, 1.95), new T.MeshStandardMaterial({ map: hlTex, roughness: 0.42 }), 0, 0, 0.425)
-
+    addMesh(highlighter, new T.PlaneGeometry(hlW * 0.92, hlL * 0.62), new T.MeshStandardMaterial({ map: hlTex, roughness: 0.42 }), 0, -hlL * 0.17, hlD + 0.005)
     clickableObjects.push({ mesh: highlighter, key: 'contact', originalScale: 1.0 })
 
     // =========================================================================
-    // ASSET 5: 3D STAINLESS STEEL PRECISION RULER (Bottom-Right)
+    // ASSET 5: 3D STAINLESS STEEL PRECISION RULER (30 CM, Bottom-Right)
     // =========================================================================
     const ruler = new T.Group()
     scene.add(ruler)
-    box(ruler, 6.2, 0.82, 0.035, aluminumSilver, 0, 0, 0.02, 0.04)
+    // Real 30cm ruler: length 4.3 units, width 0.40 units, thickness 0.015 units
+    box(ruler, 4.3, 0.40, 0.015, aluminumSilver, 0, 0, 0.008, 0.02)
 
     const rCanvas = document.createElement('canvas')
     rCanvas.width = 1024
-    rCanvas.height = 128
+    rCanvas.height = 96
     const rCtx = rCanvas.getContext('2d')!
     rCtx.fillStyle = '#cdd4da'
-    rCtx.fillRect(0, 0, 1024, 128)
+    rCtx.fillRect(0, 0, 1024, 96)
     rCtx.strokeStyle = '#1b221d'
-    rCtx.lineWidth = 2.5
+    rCtx.lineWidth = 2.0
     rCtx.beginPath()
-    for (let i = 0; i < 60; i++) {
-      const x = 30 + i * 16.2
+    for (let i = 0; i <= 60; i++) {
+      const x = 32 + i * 16.0
       const isMajor = i % 10 === 0
       const isMid = i % 5 === 0
-      const len = isMajor ? 55 : (isMid ? 38 : 22)
+      const len = isMajor ? 44 : (isMid ? 28 : 16)
       rCtx.moveTo(x, 0)
       rCtx.lineTo(x, len)
       if (isMajor && i > 0) {
-        rCtx.font = 'bold 24px Arial'
+        rCtx.font = 'bold 20px Arial'
         rCtx.fillStyle = '#1b221d'
         rCtx.textAlign = 'center'
-        rCtx.fillText(String(i / 2), x, 85)
+        rCtx.fillText(String(i / 2), x, 68)
       }
     }
     rCtx.stroke()
 
-    rCtx.font = 'bold 20px Arial'
+    rCtx.font = 'bold 16px Arial'
     rCtx.fillStyle = '#2f3b33'
     rCtx.textAlign = 'right'
-    rCtx.fillText('STAINLESS STEEL 30 CM', 980, 85)
+    rCtx.fillText('STAINLESS STEEL 30 CM', 990, 68)
 
     const rulerTex = new T.CanvasTexture(rCanvas)
     rulerTex.colorSpace = T.SRGBColorSpace
-    addMesh(ruler, new T.PlaneGeometry(6.1, 0.76), new T.MeshStandardMaterial({ map: rulerTex, metalness: 0.92, roughness: 0.22 }), 0, 0, 0.04)
+    addMesh(ruler, new T.PlaneGeometry(4.25, 0.36), new T.MeshStandardMaterial({ map: rulerTex, metalness: 0.92, roughness: 0.22 }), 0, 0, 0.018)
 
     // =========================================================================
-    // ASSET 6: 3D DISNEY / BLENDER STYLIZED DSLR CAMERA (Top-Right)
+    // ASSET 6: 3D REALISTIC DSLR CAMERA ON BASEPLATE (Top-Right)
     // =========================================================================
     const cameraProp = new T.Group()
     scene.add(cameraProp)
     cameraProp.userData = { key: 'skills' }
 
-    // Photo Prints under Camera with actual graphic art
+    // 2 Photo prints fanned out naturally beneath the camera
     const createPhotoPrint = (w: number, h: number, draw: (ctx: CanvasRenderingContext2D, width: number, height: number) => void) => {
       const p = new T.Group()
-      box(p, w, h, 0.035, warmPaper, 0, 0, 0.018, 0.04)
+      box(p, w, h, 0.015, warmPaper, 0, 0, 0.008, 0.02)
       const c = document.createElement('canvas')
       c.width = 512; c.height = Math.round(512 * (h / w))
       const ctx = c.getContext('2d')!
@@ -806,60 +791,68 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       draw(ctx, c.width, c.height)
       const tex = new T.CanvasTexture(c)
       tex.colorSpace = T.SRGBColorSpace
-      addMesh(p, new T.PlaneGeometry(w * 0.98, h * 0.98), new T.MeshStandardMaterial({ map: tex, roughness: 0.35 }), 0, 0, 0.04)
+      addMesh(p, new T.PlaneGeometry(w * 0.98, h * 0.98), new T.MeshStandardMaterial({ map: tex, roughness: 0.35 }), 0, 0, 0.016)
       return p
     }
 
-    const print1 = createPhotoPrint(2.6, 3.2, (ctx, cw, ch) => {
-      // Architectural photography composition
-      ctx.fillStyle = '#10221c'; ctx.fillRect(20, 20, cw - 40, ch - 80)
+    const print1 = createPhotoPrint(1.6, 2.2, (ctx, cw, ch) => {
+      ctx.fillStyle = '#10221c'; ctx.fillRect(16, 16, cw - 32, ch - 64)
       ctx.fillStyle = '#e8592c'
-      ctx.beginPath(); ctx.arc(cw * 0.65, ch * 0.35, 60, 0, Math.PI * 2); ctx.fill()
-      ctx.fillStyle = '#3a584c'; ctx.fillRect(40, ch * 0.45, cw - 80, ch * 0.35)
-      ctx.font = 'bold 20px "Space Mono", monospace'
+      ctx.beginPath(); ctx.arc(cw * 0.65, ch * 0.35, 45, 0, Math.PI * 2); ctx.fill()
+      ctx.fillStyle = '#3a584c'; ctx.fillRect(32, ch * 0.45, cw - 64, ch * 0.35)
+      ctx.font = 'bold 16px "Space Mono", monospace'
       ctx.fillStyle = '#334038'
-      ctx.fillText('HELLENS ARCHIVE // 01', 30, ch - 30)
+      ctx.fillText('HELLENS ARCHIVE // 01', 24, ch - 24)
     })
-    print1.position.set(0.2, 0.2, 0.015)
-    print1.rotation.z = -0.32
+    print1.position.set(0.15, 0.15, 0.01)
+    print1.rotation.z = -0.28
     cameraProp.add(print1)
 
-    const print2 = createPhotoPrint(2.5, 3.1, (ctx, cw, ch) => {
-      ctx.fillStyle = '#1f2e27'; ctx.fillRect(20, 20, cw - 40, ch - 80)
-      ctx.fillStyle = '#52b788'; ctx.fillRect(50, 60, cw - 100, 160)
-      ctx.fillStyle = '#f4f0e6'; ctx.fillRect(80, 180, 120, 80)
-      ctx.font = 'bold 20px "Space Mono", monospace'
+    const print2 = createPhotoPrint(1.5, 2.1, (ctx, cw, ch) => {
+      ctx.fillStyle = '#1f2e27'; ctx.fillRect(16, 16, cw - 32, ch - 64)
+      ctx.fillStyle = '#52b788'; ctx.fillRect(40, 50, cw - 80, 120)
+      ctx.fillStyle = '#f4f0e6'; ctx.fillRect(60, 140, 90, 60)
+      ctx.font = 'bold 16px "Space Mono", monospace'
       ctx.fillStyle = '#334038'
-      ctx.fillText('STUDIO PROCESS // 02', 30, ch - 30)
+      ctx.fillText('STUDIO PROCESS // 02', 24, ch - 24)
     })
-    print2.position.set(0, 0, 0.045)
-    print2.rotation.z = -0.15
+    print2.position.set(-0.15, -0.25, 0.02)
+    print2.rotation.z = 0.15
     cameraProp.add(print2)
 
-    // Camera Body (Ergonomic rounded chassis with textured grip)
-    box(cameraProp, 2.3, 1.6, 1.15, plasticDark, 0, 0, 0.65, 0.18)
-    box(cameraProp, 1.0, 0.68, 0.45, plasticDark, -0.15, 0.2, 1.30, 0.08)
-    box(cameraProp, 0.42, 0.38, 0.06, chromeMetal, -0.15, 0.2, 1.55, 0.02)
+    // Camera sits upright on baseplate on top of photo prints (base Z = 0.035)
+    const camBaseZ = 0.035
+    const camBodyW = 1.85, camBodyD = 0.95, camBodyH = 1.15
+    // Main Body
+    box(cameraProp, camBodyW, camBodyD, camBodyH, plasticDark, 0, 0.1, camBaseZ + camBodyH / 2, 0.12)
+    // Ergonomic Handgrip on Right Shoulder
+    box(cameraProp, 0.55, 0.55, camBodyH * 0.95, material('#141716', 0.05, 0.75), 0.72, -0.15, camBaseZ + (camBodyH * 0.95) / 2, 0.10)
+    // Viewfinder Pentaprism Hump in Center
+    box(cameraProp, 0.75, 0.65, 0.32, plasticDark, -0.05, 0.05, camBaseZ + camBodyH + 0.14, 0.06)
+    // Hot shoe
+    box(cameraProp, 0.28, 0.32, 0.05, chromeMetal, -0.05, 0.05, camBaseZ + camBodyH + 0.31, 0.02)
+    // Mode Dial on Left Shoulder
+    addMesh(cameraProp, new T.CylinderGeometry(0.18, 0.18, 0.14, 24), chromeMetal, -0.62, 0.08, camBaseZ + camBodyH + 0.07)
+    // Shutter button on front grip
+    addMesh(cameraProp, new T.CylinderGeometry(0.12, 0.13, 0.12, 20), chromeMetal, 0.72, -0.32, camBaseZ + camBodyH * 0.92)
 
-    // Mode Dial & Shutter Button
-    const dial = addMesh(cameraProp, new T.CylinderGeometry(0.24, 0.24, 0.22, 32), chromeMetal, 0.68, 0.2, 1.30)
-    dial.rotation.x = Math.PI / 2
-    addMesh(cameraProp, new T.CylinderGeometry(0.04, 0.04, 0.23, 16), neonOrange, 0.68, 0.32, 1.30).rotation.x = Math.PI / 2
-
-    const shutter = addMesh(cameraProp, new T.CylinderGeometry(0.16, 0.18, 0.16, 24), chromeMetal, 0.74, -0.42, 1.25)
-    shutter.rotation.x = Math.PI / 2
-
-    // Telephoto Zoom Lens Assembly with Red Ring & Multi-coated Glass
+    // Zoom Lens Barrel extending forward horizontally along -Y (towards the front of the desk)
+    const lensRadius = 0.42
+    const lensCenterZ = camBaseZ + camBodyH * 0.50
     const lensGroup = new T.Group()
     cameraProp.add(lensGroup)
-    lensGroup.position.set(-0.25, -0.15, 1.25)
-
-    addMesh(lensGroup, new T.CylinderGeometry(0.72, 0.76, 0.5, 36), plasticDark, 0, 0, 0.25).rotation.x = Math.PI / 2
-    addMesh(lensGroup, new T.CylinderGeometry(0.725, 0.725, 0.05, 36), neonOrange, 0, 0, 0.52).rotation.x = Math.PI / 2
-    addMesh(lensGroup, new T.CylinderGeometry(0.68, 0.72, 0.65, 36), plasticDark, 0, 0, 0.85).rotation.x = Math.PI / 2
-    addMesh(lensGroup, new T.CylinderGeometry(0.70, 0.70, 0.42, 36), material('#0f1210', 0.02, 0.85), 0, 0, 0.85).rotation.x = Math.PI / 2
-    addMesh(lensGroup, new T.CylinderGeometry(0.64, 0.68, 0.22, 36), plasticDark, 0, 0, 1.25).rotation.x = Math.PI / 2
-
+    lensGroup.position.set(-0.05, -camBodyD / 2 + 0.1, lensCenterZ)
+    // Base mount ring:
+    addMesh(lensGroup, new T.CylinderGeometry(lensRadius * 0.92, lensRadius * 0.92, 0.18, 32), chromeMetal, 0, -0.09, 0)
+    // Main barrel:
+    addMesh(lensGroup, new T.CylinderGeometry(lensRadius, lensRadius, 0.55, 32), plasticDark, 0, -0.45, 0)
+    // Rubber ribbed zoom ring:
+    addMesh(lensGroup, new T.CylinderGeometry(lensRadius * 1.02, lensRadius * 1.02, 0.35, 32), material('#121513', 0.02, 0.88), 0, -0.75, 0)
+    // Iconic Red Focus Ring:
+    addMesh(lensGroup, new T.CylinderGeometry(lensRadius * 1.01, lensRadius * 1.01, 0.04, 32), neonOrange, 0, -0.96, 0)
+    // Front lens barrel:
+    addMesh(lensGroup, new T.CylinderGeometry(lensRadius * 1.04, lensRadius * 0.98, 0.35, 32), plasticDark, 0, -1.15, 0)
+    // Front glass element:
     const glassMat = new T.MeshPhysicalMaterial({
       color: '#e2f0fd',
       transmission: 0.92,
@@ -871,8 +864,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       clearcoat: 1.0,
       clearcoatRoughness: 0.05
     })
-    const frontLens = addMesh(lensGroup, new T.SphereGeometry(0.55, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.45), glassMat, 0, 0, 1.15)
-    frontLens.rotation.x = -Math.PI / 2
+    addMesh(lensGroup, new T.CylinderGeometry(lensRadius * 0.88, lensRadius * 0.88, 0.02, 32), glassMat, 0, -1.33, 0)
 
     clickableObjects.push({ mesh: cameraProp, key: 'skills', originalScale: 1.0 })
 
@@ -883,48 +875,48 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     scene.add(earpods)
 
     const cableCurve = new T.CatmullRomCurve3([
-      new T.Vector3(0.5, 1.8, 0.04),
-      new T.Vector3(0.2, 1.1, 0.03),
-      new T.Vector3(0.8, 0.3, 0.025),
-      new T.Vector3(1.2, -0.6, 0.03),
-      new T.Vector3(0.4, -1.2, 0.03),
-      new T.Vector3(-0.3, -1.8, 0.04)
+      new T.Vector3(0.5, 1.8, 0.03),
+      new T.Vector3(0.2, 1.1, 0.02),
+      new T.Vector3(0.7, 0.3, 0.02),
+      new T.Vector3(0.9, -0.4, 0.02),
+      new T.Vector3(0.5, -1.0, 0.02),
+      new T.Vector3(0.35, -1.45, 0.025)
     ])
-    addMesh(earpods, new T.TubeGeometry(cableCurve, 64, 0.022, 12, false), plasticWhite)
+    addMesh(earpods, new T.TubeGeometry(cableCurve, 64, 0.011, 10, false), plasticWhite)
 
     const leftBranch = new T.CatmullRomCurve3([
-      new T.Vector3(0.8, 0.3, 0.025),
-      new T.Vector3(0.4, 0.6, 0.035),
-      new T.Vector3(-0.2, 0.9, 0.06)
+      new T.Vector3(0.7, 0.3, 0.02),
+      new T.Vector3(0.4, 0.6, 0.025),
+      new T.Vector3(0.05, 0.85, 0.035)
     ])
-    addMesh(earpods, new T.TubeGeometry(leftBranch, 32, 0.018, 12, false), plasticWhite)
+    addMesh(earpods, new T.TubeGeometry(leftBranch, 32, 0.010, 10, false), plasticWhite)
 
     const buildEarPod = (x: number, y: number, z: number, rotZ: number) => {
       const pod = new T.Group()
       earpods.add(pod)
       pod.position.set(x, y, z)
       pod.rotation.z = rotZ
-      addMesh(pod, new T.SphereGeometry(0.12, 24, 18), plasticWhite, 0, 0, 0.08).scale.set(1.1, 1.4, 0.9)
-      addMesh(pod, new T.CylinderGeometry(0.035, 0.035, 0.35, 16), plasticWhite, 0.05, -0.22, 0.06).rotation.z = 0.15
-      addMesh(pod, new T.CircleGeometry(0.045, 16), material('#353d38', 0.2, 0.8), -0.04, 0.04, 0.16)
+      addMesh(pod, new T.SphereGeometry(0.10, 20, 16), plasticWhite, 0, 0, 0.06).scale.set(1.1, 1.3, 0.85)
+      addMesh(pod, new T.CylinderGeometry(0.025, 0.025, 0.28, 14), plasticWhite, 0.04, -0.18, 0.05).rotation.z = 0.15
+      addMesh(pod, new T.CircleGeometry(0.035, 14), material('#353d38', 0.2, 0.8), -0.03, 0.03, 0.13)
     }
-    buildEarPod(-0.25, 0.95, 0.06, 0.45)
-    buildEarPod(0.55, 1.9, 0.05, -0.65)
+    buildEarPod(0.05, 0.90, 0.035, 0.45)
+    buildEarPod(0.55, 1.9, 0.035, -0.65)
 
     // =========================================================================
-    // ASSET 8: 3D METALLIC WIRE PAPERCLIPS
+    // ASSET 8: 3D METALLIC WIRE PAPERCLIPS (Standard 3.2cm size)
     // =========================================================================
     const clips = [new T.Group(), new T.Group(), new T.Group()]
     for (const clip of clips) {
       scene.add(clip)
       const pts = [
-        [-0.09, -0.22], [-0.09, 0.22], [-0.04, 0.32], [0.08, 0.32],
-        [0.14, 0.22], [0.14, -0.32], [0.05, -0.40], [-0.09, -0.39],
-        [-0.18, -0.28], [-0.18, 0.20], [-0.11, 0.42], [0.07, 0.45],
-        [0.23, 0.32], [0.23, -0.20]
+        [-0.05, -0.12], [-0.05, 0.12], [-0.02, 0.18], [0.04, 0.18],
+        [0.08, 0.12], [0.08, -0.18], [0.03, -0.22], [-0.05, -0.21],
+        [-0.10, -0.15], [-0.10, 0.11], [-0.06, 0.23], [0.04, 0.25],
+        [0.13, 0.18], [0.13, -0.11]
       ]
-      const curve = new T.CatmullRomCurve3(pts.map(([x, y]) => new T.Vector3(x, y, 0.045)))
-      addMesh(clip, new T.TubeGeometry(curve, 96, 0.016, 12, false), chromeMetal)
+      const curve = new T.CatmullRomCurve3(pts.map(([x, y]) => new T.Vector3(x, y, 0.02)))
+      addMesh(clip, new T.TubeGeometry(curve, 64, 0.009, 10, false), chromeMetal)
     }
 
     // =========================================================================
@@ -1205,7 +1197,7 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
           }
         })
 
-        const fittedGameboy = fitAndCenter(gltf.scene, 3.4)
+        const fittedGameboy = fitAndCenter(gltf.scene, 2.1)
         gameboy.add(fittedGameboy)
         unifyLight(gameboy)
       },
@@ -1400,71 +1392,71 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       centerTitleGroup.position.set(0, mobile ? 0.35 : 0.28, 0)
       centerTitleGroup.scale.setScalar(mobile ? 0.65 : 0.88)
 
-      // Laptop (Top-Left): positioned naturally with ample clearance below nav strip
-      laptop.position.set(-halfX * 0.70, halfY * 0.27, 0.02)
+      // Laptop (Top-Left): 4.4 x 2.9 unibody
+      laptop.position.set(-halfX * 0.70, halfY * 0.30, 0.02)
       laptop.scale.setScalar((mobile ? 0.72 : 0.88) * scaleMultiplier)
       laptop.rotation.set(0.04, 0.04, 0.06)
 
-      // DSLR Camera (Top-Right Corner resting on photo prints)
-      cameraProp.position.set(halfX * 0.78, halfY * 0.58, 0.02)
-      cameraProp.scale.setScalar((mobile ? 0.75 : 0.88) * scaleMultiplier)
-      cameraProp.rotation.set(0.18, -0.15, -0.42)
+      // DSLR Camera with Photo Prints (Top-Right): body 1.85 x 0.95, lens extends forward
+      cameraProp.position.set(halfX * 0.75, halfY * 0.55, 0.02)
+      cameraProp.scale.setScalar((mobile ? 0.80 : 1.0) * scaleMultiplier)
+      cameraProp.rotation.set(0.12, -0.08, -0.32)
 
-      // Retro Gameboy (Mid-Right Desk, between camera and polaroid)
-      gameboy.position.set(halfX * 0.72, halfY * 0.14, 0.02)
-      gameboy.scale.setScalar((mobile ? 0.72 : 0.88) * scaleMultiplier)
-      gameboy.rotation.set(0.10, -0.05, -0.18)
+      // Retro Gameboy (Mid-Right Desk, realistic 14.8cm DMG-01 scale): 1.3 x 2.1
+      gameboy.position.set(halfX * 0.74, halfY * 0.12, 0.02)
+      gameboy.scale.setScalar((mobile ? 0.80 : 1.0) * scaleMultiplier)
+      gameboy.rotation.set(0.10, -0.05, -0.16)
 
-      // Sketchbook (Bottom-Left)
-      sketchbook.position.set(-halfX * 0.66, -halfY * 0.65, 0.02)
+      // Polaroid Botanical Print (Lower-Right below Gameboy, realistic 8.8x10.7cm): 1.3 x 1.6
+      polaroid.position.set(halfX * 0.75, -halfY * 0.30, 0.02)
+      polaroid.scale.setScalar((mobile ? 0.82 : 1.0) * scaleMultiplier)
+      polaroid.rotation.z = 0.12
+
+      // Sketchbook (Bottom-Left): 3.8 x 2.7
+      sketchbook.position.set(-halfX * 0.66, -halfY * 0.64, 0.02)
       sketchbook.scale.setScalar((mobile ? 0.75 : 0.95) * scaleMultiplier)
       sketchbook.rotation.set(0.08, 0.04, 0.10)
 
       // PolyHaven Yellow Drafting Pencil (Beside sketchbook at bottom-left)
-      stationeryPencilYellow.position.set(-halfX * 0.32, -halfY * 0.72, 0.02)
+      stationeryPencilYellow.position.set(-halfX * 0.30, -halfY * 0.72, 0.02)
       stationeryPencilYellow.rotation.z = 0.24
       stationeryPencilYellow.scale.setScalar(scaleMultiplier)
 
       // PolyHaven Artist Eraser (Bottom-Left near pencil)
-      stationeryEraser.position.set(-halfX * 0.42, -halfY * 0.86, 0.02)
+      stationeryEraser.position.set(-halfX * 0.40, -halfY * 0.86, 0.02)
       stationeryEraser.rotation.z = 0.28
       stationeryEraser.scale.setScalar(scaleMultiplier)
 
-      // Sticky Note Pad (Left-Center cleanly below laptop, no overlap)
-      stickyNote.position.set(-halfX * 0.68, -halfY * 0.08, 0.02)
-      stickyNote.scale.setScalar((mobile ? 0.78 : 0.92) * scaleMultiplier)
-      stickyNote.rotation.z = -0.08
-
-      // Polaroid Photo Print (Right-Center below Gameboy)
-      polaroid.position.set(halfX * 0.76, -halfY * 0.38, 0.02)
-      polaroid.scale.setScalar((mobile ? 0.75 : 0.90) * scaleMultiplier)
-      polaroid.rotation.z = 0.12
+      // Sticky Note Pad (Left-Center cleanly below laptop, realistic 3"x3" Post-it, no overlap)
+      stickyNote.position.set(-halfX * 0.70, -halfY * 0.08, 0.02)
+      stickyNote.scale.setScalar((mobile ? 0.85 : 1.0) * scaleMultiplier)
+      stickyNote.rotation.z = -0.06
 
       // PolyHaven Designer Pen (Near Ruler at Bottom-Right)
-      stationeryPenFancy.position.set(halfX * 0.36, -halfY * 0.78, 0.02)
+      stationeryPenFancy.position.set(halfX * 0.34, -halfY * 0.76, 0.02)
       stationeryPenFancy.rotation.z = -0.42
       stationeryPenFancy.scale.setScalar(scaleMultiplier)
 
-      // STABILO Boss Highlighter (Bottom-Right)
-      highlighter.position.set(halfX * 0.56, -halfY * 0.64, 0.02)
-      highlighter.scale.setScalar((mobile ? 0.75 : 0.88) * scaleMultiplier)
+      // STABILO Boss Highlighter (Bottom-Right, realistic 2.7x10.5cm): 0.42 x 1.55
+      highlighter.position.set(halfX * 0.52, -halfY * 0.65, 0.02)
+      highlighter.scale.setScalar((mobile ? 0.80 : 1.0) * scaleMultiplier)
       highlighter.rotation.z = 0.45
 
-      // Stainless Steel Ruler (Bottom-Right border)
-      ruler.position.set(halfX * 0.70, -halfY * 0.82, 0.02)
-      ruler.scale.setScalar((mobile ? 0.75 : 0.92) * scaleMultiplier)
-      ruler.rotation.z = -0.58
+      // Stainless Steel 30cm Ruler (Bottom-Right border, realistic 30x2.8cm): 4.3 x 0.40
+      ruler.position.set(halfX * 0.68, -halfY * 0.82, 0.02)
+      ruler.scale.setScalar((mobile ? 0.80 : 1.0) * scaleMultiplier)
+      ruler.rotation.z = -0.55
 
-      // EarPods (Right-Center draping towards bottom)
-      earpods.position.set(halfX * 0.44, -halfY * 0.06, 0.02)
-      earpods.scale.setScalar((mobile ? 0.75 : 0.88) * scaleMultiplier)
+      // EarPods (Right-Center draping beside central cards)
+      earpods.position.set(halfX * 0.42, -halfY * 0.04, 0.02)
+      earpods.scale.setScalar((mobile ? 0.75 : 0.90) * scaleMultiplier)
       earpods.rotation.z = -0.15
 
-      // Paperclips scattered naturally
+      // Paperclips scattered naturally near ruler (standard 3.2cm size)
       clips.forEach((c, i) => {
-        c.position.set(halfX * 0.52 - i * 0.42, -halfY * 0.82 - i * 0.12, 0.01)
+        c.position.set(halfX * 0.46 - i * 0.30, -halfY * 0.82 - i * 0.08, 0.01)
         c.rotation.z = 0.35 + i * 0.6
-        c.scale.setScalar((mobile ? 0.68 : 0.82) * scaleMultiplier)
+        c.scale.setScalar((mobile ? 0.80 : 1.0) * scaleMultiplier)
       })
 
       clickableObjects.forEach(c => {

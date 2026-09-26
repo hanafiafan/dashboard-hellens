@@ -163,15 +163,12 @@ export default function DeskHero() {
           <h2>HELLENS<span className="orange-asterisk">✳</span></h2>
         </div>
 
-        {/* Middle Cutout: Dashboard with Masking Tape */}
+        {/* Middle Cutout: Dashboard */}
         <div 
           className="paper-card paper-dashboard"
           onClick={() => setActiveModal('projects')}
           title="Click to view Selected Dashboard Projects"
         >
-          <div className="scotch-tape tape-left" />
-          <div className="scotch-tape tape-right" />
-          <div className="scotch-tape tape-top" />
           <h1>Dashboard</h1>
           <div className="orange-marker-brush" />
         </div>
