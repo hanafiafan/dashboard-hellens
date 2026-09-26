@@ -1,0 +1,18 @@
+3D asset credits — HELLENS Dashboard Portofolio
+
+MacBook Laptop by Issac Ghazanfar
+https://sketchfab.com/3d-models/macbook-laptop-7ceb46a1425b475fa7f6bf192e01ed74
+CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+Changes: embedded textures resized to a maximum of 1024 pixels; runtime scale and placement.
+
+Retro gameboy by HarishJ
+https://sketchfab.com/3d-models/retro-gameboy-542900f02e6d40718e72a1556fb3a174
+CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+Changes: embedded textures resized to a maximum of 1024 pixels; runtime scale and placement.
+
+Stationery Supplies by Mateusz Sadek / Poly Haven
+https://polyhaven.com/a/stationery_supplies
+CC0 1.0 — https://creativecommons.org/publicdomain/zero/1.0/
+Official 1K glTF distribution; two pencil meshes selected at runtime.
+
+Original user-provided files are preserved in .openai/.
