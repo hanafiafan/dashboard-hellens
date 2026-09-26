@@ -61,14 +61,15 @@ export default function DeskHero() {
 
       {/* 2. Top Navigation: Torn Paper Strip Pinned to Desk */}
       <header className="paper-nav-wrapper">
+        {/* Blue 3D Pushpin on the Left (positioned outside clip-path so it's not clipped) */}
+        <div className="blue-pushpin" title="Pinned to desk" />
+
         <nav 
           className="paper-nav-strip"
           style={{
-            transform: `translate(calc(-50% + ${paperShiftX * 0.3}px), ${paperShiftY * 0.3}px) rotate(-0.6deg)`
+            transform: `translate(${paperShiftX * 0.3}px, ${paperShiftY * 0.3}px) rotate(-0.6deg)`
           }}
         >
-          {/* Blue 3D Pushpin on the Left */}
-          <div className="blue-pushpin" title="Pinned to desk" />
 
           {/* Brand Logo */}
           <div 

@@ -440,12 +440,12 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
     sCtx.strokeRect(90, 410, 170, 120)
     sCtx.strokeRect(280, 410, 170, 120)
 
-    sCtx.font = 'bold 36px Arial'
+    sCtx.font = 'bold 28px Arial'
     sCtx.fillStyle = '#222b26'
-    sCtx.fillText('DASHBOARD ARCHITECTURE', 550, 110)
-    sCtx.font = '22px Arial'
+    sCtx.fillText('DASHBOARD ARCHITECTURE', 530, 110)
+    sCtx.font = '20px Arial'
     sCtx.fillStyle = '#55625a'
-    sCtx.fillText('User Flows, KPI Hierarchy & Design Tokens', 550, 150)
+    sCtx.fillText('User Flows, KPI Hierarchy & Design Tokens', 530, 150)
 
     sCtx.strokeStyle = '#e8592c'
     sCtx.lineWidth = 3
@@ -893,11 +893,18 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       return wrapper
     }
 
-    // 1. MacBook Laptop Model
+    // 1. MacBook Laptop Model (Authentic Unibody Aluminum Laptop)
     gltfLoader.load(
       '/models/macbook_laptop.glb',
       gltf => {
-        gltf.scene.rotation.set(Math.PI / 2, 0, 0)
+        // Snap screen hinge to connect seamlessly to chassis
+        const screenNode = gltf.scene.getObjectByName('Cube')
+        if (screenNode) {
+          screenNode.position.y += 2.3
+          screenNode.position.z -= 0.5
+        }
+
+        gltf.scene.rotation.set(0.85, 0, 0.25)
         dashTex.flipY = false
         dashTex.needsUpdate = true
 
@@ -910,11 +917,17 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
             }
             // Screen display mesh in macbook_laptop.glb is Material.003
             if (o.name.includes('Material003') || o.name.includes('Material.003') || o.material?.name === 'Material.003') {
-              o.material = new T.MeshBasicMaterial({ map: dashTex })
+              o.material = new T.MeshStandardMaterial({
+                map: dashTex,
+                emissiveMap: dashTex,
+                emissive: new T.Color(0xffffff),
+                emissiveIntensity: 0.7,
+                roughness: 0.2
+              })
             }
           }
         })
-        const fittedLaptop = fitAndCenter(gltf.scene, 4.8)
+        const fittedLaptop = fitAndCenter(gltf.scene, 4.4)
         laptop.add(fittedLaptop)
         unifyLight(laptop)
       },
@@ -1176,9 +1189,9 @@ export default function DeskObjects({ onSelectProp, mousePos }: DeskObjectsProps
       centerTitleGroup.scale.setScalar(mobile ? 0.65 : 0.88)
 
       // Laptop (Top-Left): positioned naturally with ample clearance below nav strip
-      laptop.position.set(-halfX * 0.70, halfY * 0.24, 0.02)
-      laptop.scale.setScalar((mobile ? 0.72 : 0.98) * scaleMultiplier)
-      laptop.rotation.set(0.12, 0.08, 0.20)
+      laptop.position.set(-halfX * 0.72, halfY * 0.42, 0.02)
+      laptop.scale.setScalar((mobile ? 0.72 : 0.95) * scaleMultiplier)
+      laptop.rotation.set(0.04, 0.04, 0.06)
 
       // DSLR Camera (Top-Right Corner resting on photo prints)
       cameraProp.position.set(halfX * 0.84, halfY * 0.68, 0.02)

@@ -155,7 +155,7 @@ html, body, #root {
 }
 
 .paper-nav-strip:hover {
-  transform: translate(calc(-50%), -2px) scale(1.005) rotate(-0.3deg) !important;
+  transform: translate(0, -2px) scale(1.005) rotate(-0.3deg) !important;
   box-shadow: 
     0 8px 18px rgba(0, 25, 18, 0.4),
     0 18px 32px rgba(0, 25, 18, 0.28);
@@ -164,8 +164,8 @@ html, body, #root {
 /* 3D Blue Pushpin */
 .blue-pushpin {
   position: absolute;
-  top: -8px;
-  left: -8px;
+  top: -6px;
+  left: -6px;
   width: 22px;
   height: 22px;
   background: radial-gradient(circle at 35% 35%, #4d94ff 0%, #1a56cc 65%, #0d3280 100%);
@@ -175,7 +175,7 @@ html, body, #root {
     inset -2px -2px 4px rgba(0, 20, 60, 0.5),
     inset 2px 2px 4px rgba(255, 255, 255, 0.8);
   cursor: pointer;
-  z-index: 20;
+  z-index: 35;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
